@@ -33,15 +33,15 @@
     <path d="M190 430 235 286 338 214 463 179 582 249 626 374 571 522 433 594 285 563 209 501Z" stroke="#fff0f8" stroke-opacity=".72" stroke-width="2"/>
     <g class="photo-scan photo-scan-a" fill="none">
       <path d="M587 263 654 202H726" stroke="#8de8ec" stroke-width="1.5"/><circle cx="587" cy="263" r="3" fill="#b7f8f6"/>
-      <text x="726" y="153" text-anchor="end" fill="#e9fcff" font-family="monospace" font-size="12" letter-spacing="2">PYROXENITE</text>
-      <text x="726" y="173" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6">Demo Mantle, Pacific Ocean</text>
-      <text x="726" y="191" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6">16.7251°N, 149.0682°E</text>
+      <text x="726" y="153" text-anchor="end" fill="#e9fcff" font-family="monospace" font-size="12" letter-spacing="2"></text>
+      <text x="726" y="173" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6"></text>
+      <text x="726" y="191" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6"></text>
     </g>
     <g class="photo-scan photo-scan-b" fill="none">
       <path d="M587 263 654 202H726" stroke="#ffc1e8" stroke-width="1.5"/><circle cx="587" cy="263" r="3" fill="#ffe5f2"/>
-      <text x="726" y="153" text-anchor="end" fill="#fff0f9" font-family="monospace" font-size="12" letter-spacing="2">BASALT</text>
-      <text x="726" y="173" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6">Demo Ridge, Pacific Ocean</text>
-      <text x="726" y="191" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6">17.4826°N, 148.3104°E</text>
+      <text x="726" y="153" text-anchor="end" fill="#fff0f9" font-family="monospace" font-size="12" letter-spacing="2"></text>
+      <text x="726" y="173" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6"></text>
+      <text x="726" y="191" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6"></text>
     </g>
     <path d="m220 228-27 19 9 35 22-13Zm411 272 20 14-13 22-30-7Zm-333 96-22 13 9 27 38-9Z" fill="#c1a2ba" stroke="#f4d9e8" stroke-opacity=".6"/>
     <g stroke="#f3d5ea" stroke-opacity=".5"><path d="M103 355h55m-27-27v54M612 210h46m-23-23v46M611 577h56m-28-28v56"/></g>
@@ -91,21 +91,20 @@
     <circle cx="380" cy="380" r="238" stroke="#d7f5f5" stroke-opacity=".72" stroke-width="3"/>
     <g class="photo-scan photo-scan-a" fill="none">
       <path d="M575 235 654 180H728" stroke="#94edeb" stroke-width="1.5"/><circle cx="575" cy="235" r="3" fill="#ddfffb"/>
-      <text x="529" y="136" fill="#eaffff" font-family="monospace" font-size="11" letter-spacing="1.7">LOCAL BOY · XPL</text>
-      <text x="529" y="152" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1">DULUTH COMPLEX / MN</text>
-      <text x="529" y="168" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1">LAT/LON · NOT LISTED</text>
+      <text x="728" y="131" text-anchor="end" fill="#eaffff" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
+      <text x="728" y="148" text-anchor="end" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <text x="728" y="165" text-anchor="end" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
     </g>
     <g class="photo-scan photo-scan-b" fill="none">
       <path d="M575 235 654 180H728" stroke="#ffc2e7" stroke-width="1.5"/><circle cx="575" cy="235" r="3" fill="#fff0f9"/>
-      <text x="529" y="136" fill="#fff0f9" font-family="monospace" font-size="11" letter-spacing="1.7">MESABA · XPL</text>
-      <text x="529" y="152" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1">DULUTH COMPLEX / MN</text>
-      <text x="529" y="168" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1">LAT/LON · NOT LISTED</text>
+      <text x="728" y="131" text-anchor="end" fill="#fff0f9" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
+      <text x="728" y="148" text-anchor="end" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <text x="728" y="165" text-anchor="end" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
     </g>
     <circle cx="380" cy="380" r="41" stroke="#effaff" stroke-opacity=".65" stroke-dasharray="4 8"/>
     <path d="M380 96v38m0 492v38M96 380h38m492 0h38M380 332v96m-48-48h96" stroke="#d3f5f5" stroke-opacity=".7" stroke-width="2"/>
     <path d="M132 595h90m-90 0v-12m30 12v-8m30 8v-8m30 8v-12" stroke="#e7f4f6" stroke-width="3"/>
     <text x="137" y="577" fill="#e7f4f6" font-family="monospace" font-size="11" letter-spacing="2">CROSS POLARIZED</text>
-    <text x="556" y="173" fill="#e7f4f6" font-family="monospace" font-size="11">XPL / 02</text>
   `, `<clipPath id="lensClip"><circle cx="380" cy="380" r="237"/></clipPath><clipPath id="microPhotoClip"><path d="M369 377 411 286 445 167 487 169 538 200 581 249 609 310 617 380 597 433 488 419 427 394Z"/></clipPath><radialGradient id="lensShade"><stop offset=".35" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#061a2b" stop-opacity=".63"/></radialGradient>`);
 
   const project = (x,y,z) => [380 + x*88 + z*42, 380 + y*88 - z*42];
@@ -166,6 +165,37 @@
     frame.append(layer);
   });
 
+  // Decorative specimen records are fictional and change with the two-photo cycle.
+  const specimenNames = {
+    rock: [
+      ['PYROXENITE', 'COARSE PYROXENITE', 'ULTRAMAFIC ROCK'],
+      ['BASALT', 'VESICULAR BASALT', 'MAFIC BASALT']
+    ],
+    microscope: [
+      ['THIN SECTION · XPL', 'CRYSTAL GRAINS · XPL', 'OPTICAL FABRIC · XPL'],
+      ['THIN SECTION · XPL', 'MINERAL FABRIC · XPL', 'INTERFERENCE · XPL']
+    ]
+  };
+  const fictionalPlaces = ['Aster Ridge', 'Lumen Rise', 'Nacre Shelf', 'Echo Seamount', 'Prism Bay', 'Violet Basin'];
+  const pick = values => values[Math.floor(Math.random()*values.length)];
+  function refreshCaption(layer, photoIndex) {
+    const kind = layer.dataset.art === '0' ? 'rock' : 'microscope';
+    const lat = (11 + Math.random()*19).toFixed(4);
+    const lon = (138 + Math.random()*35).toFixed(4);
+    const lines = [pick(specimenNames[kind][photoIndex]), `${pick(fictionalPlaces)}, Pacific Ocean`, `${lat}°N, ${lon}°E`];
+    const variant = photoIndex === 0 ? 'a' : 'b';
+    layer.querySelectorAll(`.photo-scan-${variant} text`).forEach((text,i) => { text.textContent = lines[i]; });
+  }
+  [0,1].forEach(index => {
+    const layer = frame.querySelector(`.story-art[data-art="${index}"]`);
+    refreshCaption(layer,0);
+    refreshCaption(layer,1);
+    layer.querySelector('.photo-cycle-b').addEventListener('animationiteration',() => {
+      refreshCaption(layer,0);
+      refreshCaption(layer,1);
+    });
+  });
+
   const chapters = [...home.querySelectorAll('.story-chapter')];
   const layers = [...home.querySelectorAll('.story-art')];
   const backgrounds = [...home.querySelectorAll('.story-backdrop')];
@@ -199,7 +229,7 @@
     });
     buttons.forEach((b,i) => { b.classList.toggle('active',i===nearest); if(i===nearest)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
     readout.textContent=labels[nearest];
-    current.textContent=`${String(nearest+1).padStart(2,'0')} / 05 · SCROLL TO DESCEND`;
+    current.textContent=nearest===4?'05 / 05 · DATA FIELD':`${String(nearest+1).padStart(2,'0')} / 05 · SCROLL TO DESCEND`;
   }
   const queue=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update)}};
   window.addEventListener('scroll',queue,{passive:true});
