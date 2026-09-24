@@ -81,31 +81,31 @@
     <circle cx="380" cy="380" r="238" fill="#23364c" stroke="#d4e5f0" stroke-width="2"/>
     <g clip-path="url(#lensClip)">${grains}
       <g clip-path="url(#microPhotoClip)">
-        <image class="photo-cycle-a" x="360" y="140" width="270" height="315" href="assets/thin-section-local-boy-detail.jpg" xlink:href="assets/thin-section-local-boy-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
-        <image class="photo-cycle-b" x="360" y="140" width="270" height="315" href="assets/thin-section-mesaba-detail.jpg" xlink:href="assets/thin-section-mesaba-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="photo-cycle-a" x="130" y="140" width="270" height="315" href="assets/thin-section-local-boy-detail.jpg" xlink:href="assets/thin-section-local-boy-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="photo-cycle-b" x="130" y="140" width="270" height="315" href="assets/thin-section-mesaba-detail.jpg" xlink:href="assets/thin-section-mesaba-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
       </g>
-      <path d="M369 377 411 286 445 167 487 169 538 200 581 249 609 310 617 380 597 433 488 419 427 394Z" stroke="#e9f8fa" stroke-opacity=".9" stroke-width="2.5"/>
-      <path d="m369 377 42-91 34-119m152 266-109-14-61-25" stroke="#ffb9e5" stroke-opacity=".7" stroke-width="5"/>
+      <path d="M391 377 349 286 315 167 273 169 222 200 179 249 151 310 143 380 163 433 272 419 333 394Z" stroke="#e9f8fa" stroke-opacity=".9" stroke-width="2.5"/>
+      <path d="M391 377 349 286 315 167M163 433 272 419 333 394" stroke="#ffb9e5" stroke-opacity=".7" stroke-width="5"/>
       <rect x="100" y="100" width="560" height="560" fill="url(#lensShade)"/>
     </g>
     <circle cx="380" cy="380" r="238" stroke="#d7f5f5" stroke-opacity=".72" stroke-width="3"/>
     <g class="photo-scan photo-scan-a" fill="none">
-      <path d="M575 235 654 180H728" stroke="#94edeb" stroke-width="1.5"/><circle cx="575" cy="235" r="3" fill="#ddfffb"/>
-      <text x="728" y="131" text-anchor="end" fill="#eaffff" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
-      <text x="728" y="148" text-anchor="end" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
-      <text x="728" y="165" text-anchor="end" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <path d="M185 235 106 180H32" stroke="#94edeb" stroke-width="1.5"/><circle cx="185" cy="235" r="3" fill="#ddfffb"/>
+      <text x="32" y="131" text-anchor="start" fill="#eaffff" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
+      <text x="32" y="148" text-anchor="start" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <text x="32" y="165" text-anchor="start" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
     </g>
     <g class="photo-scan photo-scan-b" fill="none">
-      <path d="M575 235 654 180H728" stroke="#ffc2e7" stroke-width="1.5"/><circle cx="575" cy="235" r="3" fill="#fff0f9"/>
-      <text x="728" y="131" text-anchor="end" fill="#fff0f9" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
-      <text x="728" y="148" text-anchor="end" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
-      <text x="728" y="165" text-anchor="end" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <path d="M185 235 106 180H32" stroke="#ffc2e7" stroke-width="1.5"/><circle cx="185" cy="235" r="3" fill="#fff0f9"/>
+      <text x="32" y="131" text-anchor="start" fill="#fff0f9" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
+      <text x="32" y="148" text-anchor="start" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
+      <text x="32" y="165" text-anchor="start" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
     </g>
     <circle cx="380" cy="380" r="41" stroke="#effaff" stroke-opacity=".65" stroke-dasharray="4 8"/>
     <path d="M380 96v38m0 492v38M96 380h38m492 0h38M380 332v96m-48-48h96" stroke="#d3f5f5" stroke-opacity=".7" stroke-width="2"/>
     <path d="M132 595h90m-90 0v-12m30 12v-8m30 8v-8m30 8v-12" stroke="#e7f4f6" stroke-width="3"/>
     <text x="137" y="577" fill="#e7f4f6" font-family="monospace" font-size="11" letter-spacing="2">CROSS POLARIZED</text>
-  `, `<clipPath id="lensClip"><circle cx="380" cy="380" r="237"/></clipPath><clipPath id="microPhotoClip"><path d="M369 377 411 286 445 167 487 169 538 200 581 249 609 310 617 380 597 433 488 419 427 394Z"/></clipPath><radialGradient id="lensShade"><stop offset=".35" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#061a2b" stop-opacity=".63"/></radialGradient>`);
+  `, `<clipPath id="lensClip"><circle cx="380" cy="380" r="237"/></clipPath><clipPath id="microPhotoClip"><path d="M391 377 349 286 315 167 273 169 222 200 179 249 151 310 143 380 163 433 272 419 333 394Z"/></clipPath><radialGradient id="lensShade"><stop offset=".35" stop-color="#fff" stop-opacity=".04"/><stop offset="1" stop-color="#061a2b" stop-opacity=".63"/></radialGradient>`);
 
   const project = (x,y,z) => [380 + x*88 + z*42, 380 + y*88 - z*42];
   let bonds = '', atoms = '';

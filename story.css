@@ -94,8 +94,8 @@
 .panel .clear-data{background:#f5f1f7;color:#493356;border-color:#baa8c8;box-shadow:inset 0 1px #fff}
 
 #axisControls{display:grid;gap:10px}
-.chart-wrap{width:min(100%,690px);height:auto;min-height:0;margin:15px auto 0}.chart-wrap svg{width:100%;height:auto;min-height:0;aspect-ratio:690/540}
-.plot-key,#plotNotice{max-width:690px;margin-left:auto;margin-right:auto}
+.chart-wrap{width:min(100%,750px);height:auto;min-height:0;margin:15px auto 0}.chart-wrap svg{width:100%;height:auto;min-height:0;aspect-ratio:750/540}
+.plot-key,#plotNotice{max-width:750px;margin-left:auto;margin-right:auto}
 .element-input{min-height:39px;width:145px;max-width:100%;border:1px solid #bfccd4;border-radius:5px;padding:7px 10px;background:#fff;color:#1c2834}
 .plot-key{gap:6px 12px}.legend-item{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid transparent;border-radius:5px;background:transparent;color:#273642;font-size:.82rem;white-space:nowrap}
 .legend-item:hover,.legend-item:focus-visible{background:#e9f2f8;border-color:#a7c4d2}.legend-item svg{width:24px;height:24px;overflow:visible}
