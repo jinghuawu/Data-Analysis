@@ -265,18 +265,22 @@
     home.style.setProperty('--header-height',`${header}px`);
     const screen=chapters[0].getBoundingClientRect().height || 1;
     const progress=clamp((header-home.getBoundingClientRect().top)/screen,0,chapters.length-1);
-    const nearest=Math.round(progress);
-    const fraction=progress-Math.floor(progress);
-    const transition=progress>=chapters.length-1?0:Math.max(0,1-Math.abs(fraction-.5)*3.1);
+    // Keep the preceding scene while its text remains in the reading area.
+    // Blend during the latter half of each chapter, as the next title moves in.
+    const segment=Math.min(Math.floor(progress),chapters.length-2);
+    const phase=clamp((progress-segment-.5)*2,0,1);
+    const visualProgress=segment+phase;
+    const nearest=Math.round(visualProgress);
+    const transition=4*phase*(1-phase);
     if(nearest!==active){ active=nearest; burst=reduced?0:performance.now()+280; if(!reduced)setTimeout(queue,300); }
     const glitch=reduced?0:Math.max(transition*.9,performance.now() < burst ? .5 : 0);
     home.style.setProperty('--glitch',glitch.toFixed(2));
     home.classList.toggle('is-glitching',glitch>.3);
     top.style.setProperty('--story-bar',`${((progress/(chapters.length-1))*100).toFixed(1)}%`);
     layers.forEach((layer,i) => {
-      const opacity=clamp(1-Math.abs(progress-i),0,1);
+      const opacity=clamp(1-Math.abs(visualProgress-i),0,1);
       layer.style.opacity=opacity.toFixed(3);
-      layer.style.transform=`translate3d(${((i-progress)*24).toFixed(1)}px,${((i-progress)*18).toFixed(1)}px,0) scale(${(1-Math.abs(progress-i)*.065).toFixed(3)})`;
+      layer.style.transform=`translate3d(${((i-visualProgress)*24).toFixed(1)}px,${((i-visualProgress)*18).toFixed(1)}px,0) scale(${(1-Math.abs(visualProgress-i)*.065).toFixed(3)})`;
       layer.classList.toggle('is-current',i===nearest);
       backgrounds[i].style.opacity=opacity.toFixed(3);
     });
