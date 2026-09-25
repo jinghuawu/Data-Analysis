@@ -296,8 +296,9 @@
       layer.style.transform=`translate3d(${((i-visualProgress)*24).toFixed(1)}px,${((i-visualProgress)*18).toFixed(1)}px,0) scale(${(1-Math.abs(visualProgress-i)*.065).toFixed(3)})`;
       layer.classList.toggle('is-current',i===nearest);
       backgrounds[i].style.opacity=opacity.toFixed(3);
-      copies[i].style.opacity=opacity.toFixed(3);
-      copies[i].style.visibility=opacity>0?'visible':'hidden';
+      // Only the dominant chapter's copy is readable during the visual blend.
+      copies[i].style.opacity=i===nearest?'1':'0';
+      copies[i].style.visibility=i===nearest?'visible':'hidden';
       copies[i].style.transform=`translate3d(0,${((i-visualProgress)*26).toFixed(1)}px,0)`;
       copies[i].classList.toggle('is-current',i===nearest);
       copies[i].setAttribute('aria-hidden',i===nearest?'false':'true');
