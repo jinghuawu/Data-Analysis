@@ -31,6 +31,11 @@
 .story-art .photo-scan-a{animation:scan-a 11s steps(1,end) infinite}.story-art .photo-scan-b{opacity:0;animation:scan-b 11s steps(1,end) infinite}
 .story-art .photo-scan path{stroke-dasharray:180;stroke-dashoffset:180}.story-art .photo-scan-a path{animation:scan-draw-a 11s linear infinite}.story-art .photo-scan-b path{animation:scan-draw-b 11s linear infinite}
 .story-art .photo-scan text{paint-order:stroke;stroke:#211c38;stroke-width:2px;stroke-opacity:.7;animation:scan-flicker 2.3s steps(2,end) infinite}
+.story-art[data-art="2"] .micro-photo{opacity:0;transition:opacity .85s ease-in-out}
+.story-art[data-art="2"] .micro-photo.is-visible{opacity:1}
+.story-art[data-art="2"] .micro-scan path{stroke-dashoffset:0}
+.story-art[data-art="2"] .micro-scan.is-refreshing path{animation:micro-scan-draw 1.1s ease-out both}
+@keyframes micro-scan-draw{from{stroke-dashoffset:180}to{stroke-dashoffset:0}}
 @keyframes scan-a{0%,42%,100%{opacity:1}50%,92%{opacity:0}}
 @keyframes scan-b{0%,42%,100%{opacity:0}50%,92%{opacity:1}}
 @keyframes scan-draw-a{0%{stroke-dashoffset:180}14%,42%{stroke-dashoffset:0}50%,100%{stroke-dashoffset:180}}
@@ -94,6 +99,7 @@
 @media(prefers-reduced-motion:reduce){.story-art,.story-backdrop,.chapter-nav button,.story-next:after{transition:none}.story-art.is-current svg,.story-art[data-art="0"] .planet-revolution,.story-art[data-art="0"] .planet-spin,.story-art[data-art="0"] .solar-halo,.story-art[data-art="2"] svg > g[clip-path],.story-art[data-art="4"] .orbit-a,.story-art[data-art="4"] .orbit-b,.story-glitch,.story-art .photo-cycle-b{animation:none}.story-art .photo-cycle-b,.story-glitch{display:none}}
 @media(prefers-reduced-motion:reduce){.story-text-frame .story-content{transition:none}}
 @media(prefers-reduced-motion:reduce){.story-art .photo-scan,.story-art .photo-scan path,.story-art .photo-scan text{animation:none}.story-art .photo-scan-a path{stroke-dashoffset:0}.story-art .photo-scan-b{display:none}}
+@media(prefers-reduced-motion:reduce){.story-art[data-art="2"] .micro-photo{transition:none}.story-art[data-art="2"] .micro-scan.is-refreshing path{animation:none}}
 
 /* Compact workbench controls. */
 .top .brand{white-space:nowrap}.nav{gap:clamp(.8rem,2.3vw,2rem)}.nav button{white-space:nowrap;letter-spacing:.07em}

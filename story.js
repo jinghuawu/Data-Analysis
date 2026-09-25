@@ -128,31 +128,29 @@
     const color=palette[Math.floor(hash(i*71)*palette.length)];
     grains += `<g transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${angle.toFixed(1)})"><path d="M${(-w*.45).toFixed(1)} ${(-h*.64).toFixed(1)} ${(-w*.16).toFixed(1)} ${(-h*.97).toFixed(1)} ${(+w*.48).toFixed(1)} ${(-h*.7).toFixed(1)} ${(+w*.62).toFixed(1)} ${(h*.37).toFixed(1)} ${(+w*.12).toFixed(1)} ${(h*.94).toFixed(1)} ${(-w*.55).toFixed(1)} ${(h*.48).toFixed(1)}Z" fill="${color}" stroke="#1b2b42" stroke-width="3" stroke-linejoin="round"/><path d="M${(-w*.22).toFixed(1)} ${(-h*.72).toFixed(1)} ${(-w*.05).toFixed(1)} ${(h*.7).toFixed(1)}m${(w*.24).toFixed(1)} ${(-h*1.17).toFixed(1)} ${(w*.17).toFixed(1)} ${(h*.79).toFixed(1)}" stroke="#fff4f2" stroke-opacity=".53" stroke-width="1.5"/></g>`;
   }
+  const microNumbers = [1,2,3,4,5,6,8,9,10,11,12];
+  const microImages = microNumbers.map((number,index) => {
+    const source = `assets/micro-${String(number).padStart(2,'0')}.jpg`;
+    return `<image class="micro-photo${index === 0 ? ' is-visible' : ''}" data-photo-number="${number}" x="130" y="140" width="270" height="315" href="${source}" xlink:href="${source}" preserveAspectRatio="xMidYMid slice"/>`;
+  }).join('');
   const microscope = svg(`
     <circle cx="380" cy="380" r="282" fill="#101e2d" stroke="#7da1b3" stroke-opacity=".55" stroke-width="3"/>
     <circle cx="380" cy="380" r="261" stroke="#c5ddeb" stroke-opacity=".35" stroke-width="12"/>
     <circle cx="380" cy="380" r="238" fill="#23364c" stroke="#d4e5f0" stroke-width="2"/>
     <g clip-path="url(#lensClip)">${grains}
       <g clip-path="url(#microPhotoClip)">
-        <image class="photo-cycle-a" x="130" y="140" width="270" height="315" href="assets/thin-section-local-boy-detail.jpg" xlink:href="assets/thin-section-local-boy-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
-        <image class="photo-cycle-b" x="130" y="140" width="270" height="315" href="assets/thin-section-mesaba-detail.jpg" xlink:href="assets/thin-section-mesaba-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
+        ${microImages}
       </g>
       <path d="M391 377 349 286 315 167 273 169 222 200 179 249 151 310 143 380 163 433 272 419 333 394Z" stroke="#e9f8fa" stroke-opacity=".9" stroke-width="2.5"/>
       <path d="M391 377 349 286 315 167M163 433 272 419 333 394" stroke="#ffb9e5" stroke-opacity=".7" stroke-width="5"/>
       <rect x="100" y="100" width="560" height="560" fill="url(#lensShade)"/>
     </g>
     <circle cx="380" cy="380" r="238" stroke="#d7f5f5" stroke-opacity=".72" stroke-width="3"/>
-    <g class="photo-scan photo-scan-a" fill="none">
+    <g class="photo-scan micro-scan" fill="none">
       <path d="M185 235 106 180H32" stroke="#94edeb" stroke-width="1.5"/><circle cx="185" cy="235" r="3" fill="#ddfffb"/>
       <text x="32" y="131" text-anchor="start" fill="#eaffff" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
       <text x="32" y="148" text-anchor="start" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
       <text x="32" y="165" text-anchor="start" fill="#b8e1ec" font-family="monospace" font-size="9" letter-spacing="1"></text>
-    </g>
-    <g class="photo-scan photo-scan-b" fill="none">
-      <path d="M185 235 106 180H32" stroke="#ffc2e7" stroke-width="1.5"/><circle cx="185" cy="235" r="3" fill="#fff0f9"/>
-      <text x="32" y="131" text-anchor="start" fill="#fff0f9" font-family="monospace" font-size="11" letter-spacing="1.7"></text>
-      <text x="32" y="148" text-anchor="start" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
-      <text x="32" y="165" text-anchor="start" fill="#efc7e7" font-family="monospace" font-size="9" letter-spacing="1"></text>
     </g>
     <circle cx="380" cy="380" r="41" stroke="#effaff" stroke-opacity=".65" stroke-dasharray="4 8"/>
     <path d="M380 96v38m0 492v38M96 380h38m492 0h38M380 332v96m-48-48h96" stroke="#d3f5f5" stroke-opacity=".7" stroke-width="2"/>
@@ -218,36 +216,48 @@
     frame.append(layer);
   });
 
-  // Decorative specimen records are fictional and change with the two-photo cycle.
-  const specimenNames = {
-    rock: [
+  // Decorative records are fictional, and each microscope caption follows its photo.
+  const rockNames = [
       ['PYROXENITE', 'COARSE PYROXENITE', 'ULTRAMAFIC ROCK'],
       ['BASALT', 'VESICULAR BASALT', 'MAFIC BASALT']
-    ],
-    microscope: [
-      ['THIN SECTION · XPL', 'CRYSTAL GRAINS · XPL', 'OPTICAL FABRIC · XPL'],
-      ['THIN SECTION · XPL', 'MINERAL FABRIC · XPL', 'INTERFERENCE · XPL']
-    ]
-  };
+  ];
   const fictionalPlaces = ['Aster Ridge', 'Lumen Rise', 'Nacre Shelf', 'Echo Seamount', 'Prism Bay', 'Violet Basin'];
+  const fictionalRegions = ['Pacific Ocean', 'Azure Basin', 'Lunar Sea', 'North Rift', 'Crystal Gulf'];
   const pick = values => values[Math.floor(Math.random()*values.length)];
-  function refreshCaption(layer, photoIndex) {
-    const kind = layer.dataset.art === '1' ? 'rock' : 'microscope';
+  function refreshRockCaption(layer, photoIndex) {
     const lat = (11 + Math.random()*19).toFixed(4);
     const lon = (138 + Math.random()*35).toFixed(4);
-    const lines = [pick(specimenNames[kind][photoIndex]), `${pick(fictionalPlaces)}, Pacific Ocean`, `${lat}°N, ${lon}°E`];
+    const lines = [pick(rockNames[photoIndex]), `${pick(fictionalPlaces)}, Pacific Ocean`, `${lat}°N, ${lon}°E`];
     const variant = photoIndex === 0 ? 'a' : 'b';
     layer.querySelectorAll(`.photo-scan-${variant} text`).forEach((text,i) => { text.textContent = lines[i]; });
   }
-  [1,2].forEach(index => {
-    const layer = frame.querySelector(`.story-art[data-art="${index}"]`);
-    refreshCaption(layer,0);
-    refreshCaption(layer,1);
-    layer.querySelector('.photo-cycle-b').addEventListener('animationiteration',() => {
-      refreshCaption(layer,0);
-      refreshCaption(layer,1);
-    });
+  const rockLayer = frame.querySelector('.story-art[data-art="1"]');
+  refreshRockCaption(rockLayer,0);
+  refreshRockCaption(rockLayer,1);
+  rockLayer.querySelector('.photo-cycle-b').addEventListener('animationiteration',() => {
+    refreshRockCaption(rockLayer,0);
+    refreshRockCaption(rockLayer,1);
   });
+
+  const microLayer = frame.querySelector('.story-art[data-art="2"]');
+  const microPhotos = [...microLayer.querySelectorAll('.micro-photo')];
+  const microScan = microLayer.querySelector('.micro-scan');
+  let microIndex = 0;
+  function showMicroPhoto(index) {
+    microPhotos.forEach((photo,i) => { photo.classList.toggle('is-visible',i === index); });
+    const longitude = `${(10 + Math.random()*165).toFixed(4)}°${Math.random() < .5 ? 'E' : 'W'}`;
+    const latitude = `${(4 + Math.random()*74).toFixed(4)}°${Math.random() < .5 ? 'N' : 'S'}`;
+    const lines = [`#${microNumbers[index]}`, `${pick(fictionalPlaces)}, ${pick(fictionalRegions)}`, `${longitude}, ${latitude}`];
+    microScan.querySelectorAll('text').forEach((label,i) => { label.textContent = lines[i]; });
+    microScan.classList.remove('is-refreshing');
+    void microScan.getBoundingClientRect();
+    microScan.classList.add('is-refreshing');
+  }
+  showMicroPhoto(microIndex);
+  if (!reduced) window.setInterval(() => {
+    microIndex = (microIndex + 1) % microNumbers.length;
+    showMicroPhoto(microIndex);
+  },5600);
 
   const chapters = [...home.querySelectorAll('.story-chapter')];
   // The chapter articles keep the scroll distance and jump targets. Their text
