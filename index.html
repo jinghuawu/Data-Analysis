@@ -12,16 +12,17 @@
 
 
 .chip-list{max-height:220px;overflow:auto;align-content:start}.chip{display:inline-flex;align-items:center;gap:5px;cursor:grab;user-select:none;touch-action:none}.chip:active{cursor:grabbing}.chip.absent{opacity:.58}.chip.dragging{opacity:.35}.chip.drag-target{outline:2px solid #7459ac;outline-offset:2px}.chip .grip{font-size:1rem;line-height:1;color:#607987}.history-panel{margin-top:17px;padding:23px}.history-table-wrap{max-height:320px}.tsv-output{height:140px;margin-top:14px;font-size:.75rem}.check-label{display:flex;gap:8px;align-items:center;color:#263542;font-size:.8rem}.check-label input{margin:0}.sort-right .table-wrap{max-height:600px}.data-table td[contenteditable="true"]{background:#f4faff;cursor:text}.data-table td[contenteditable="true"]:focus{outline:2px solid #7aa8c9;outline-offset:-2px}.data-table td.missing{color:#8b9aa5}.history-panel .control-btn{background:#e9f0f5;color:#21313d;border-color:#aabdc8}
-</style><link rel="stylesheet" href="story.css?v=ba13b7e4"></head><body><div class="shell"><header class="top"><button class="brand" data-view="home">数据分析<span> / Data Analysis</span></button><nav class="nav" aria-label="主导航"><button class="active" data-view="home">欢迎</button><button data-view="sort">01 / 数据导入</button><button data-view="plot">02 / 投图分析</button></nav></header><main><section id="home" class="view home active" aria-label="欢迎 · 从样品到数据">
+</style><link rel="stylesheet" href="story.css?v=7f14d16c"></head><body><div class="shell"><header class="top"><button class="brand" data-view="home">数据分析<span> / Data Analysis</span></button><nav class="nav" aria-label="主导航"><button class="active" data-view="home">欢迎</button><button data-view="sort">01 / 数据导入</button><button data-view="plot">02 / 投图分析</button></nav></header><main><section id="home" class="view home active" aria-label="欢迎 · 从行星到数据">
   <div class="home-story">
     <div class="home-visual" aria-hidden="false">
-      <div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div>
+      <div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div>
       <div class="story-art-frame" aria-hidden="true"></div>
       <div class="story-grain" aria-hidden="true"></div><div class="story-glitch" aria-hidden="true"></div>
-      <div class="story-readout" aria-hidden="true">DEPTH / 01—05<strong>岩石 / ROCK</strong><small>STRUCTURE IN MOTION</small></div>
-      <div class="story-corner" aria-hidden="true"><span>01 / 05 · SCROLL TO DESCEND</span></div>
+      <div class="story-readout" aria-hidden="true">DEPTH / 01—06<strong>行星 / PLANET</strong><small>STRUCTURE IN MOTION</small></div>
+      <div class="story-corner" aria-hidden="true"><span>01 / 06 · SCROLL TO DESCEND</span></div>
       <nav class="chapter-nav" aria-label="探索章节">
-        <button class="active" type="button" aria-label="跳到岩石" aria-current="step">岩石</button>
+        <button class="active" type="button" aria-label="跳到行星" aria-current="step">行星</button>
+        <button type="button" aria-label="跳到岩石">岩石</button>
         <button type="button" aria-label="跳到显微镜下">显微</button>
         <button type="button" aria-label="跳到矿物">矿物</button>
         <button type="button" aria-label="跳到原子">原子</button>
@@ -29,40 +30,48 @@
       </nav>
     </div>
     <div class="story-copy">
+      <article class="story-chapter" id="planet" aria-labelledby="planet-title">
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 01 · PLANET</div>
+          <h1 id="planet-title">沿着轨道，<br><em>看见行星。</em></h1>
+          <p>行星沿轨道公转，也在自转中记录自身的演化。从浩瀚星空出发，逐渐走近岩石与元素的世界。</p>
+          <span class="story-en">ORBIT / ROTATION / PLANETARY SIGNAL</span>
+          <button class="story-next" type="button" data-next="1">走近岩石</button>
+        </div>
+      </article>
       <article class="story-chapter" id="rock" aria-labelledby="rock-title">
-        <div class="story-content"><div class="story-index">分析 / CHAPTER 01 · ROCK</div>
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 02 · ROCK</div>
           <h1 id="rock-title">从岩石，<br><em>深入其中。</em></h1>
           <p>每一块岩石，都是时间、温度、压力与元素共同写下的函数。</p>
           <span class="story-en">GEOCHEMICAL DATA WORKBENCH / 2026</span>
-          <button class="story-next" type="button" data-next="1">开始探索</button>
+          <button class="story-next" type="button" data-next="2">开始探索</button>
         </div>
       </article>
       <article class="story-chapter" id="microscope" aria-labelledby="microscope-title">
-        <div class="story-content"><div class="story-index">分析 / CHAPTER 02 · THIN SECTION</div>
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 03 · THIN SECTION</div>
           <h2 id="microscope-title">显微镜下，<br><em>结构显影。</em></h2>
           <p>偏光中的颜色与边界，让肉眼看不见的矿物颗粒逐渐清晰。细节开始连接成线索。</p>
           <span class="story-en">POLARIZED LIGHT / HIDDEN PATTERNS</span>
-          <button class="story-next" type="button" data-next="2">继续放大</button>
+          <button class="story-next" type="button" data-next="3">继续放大</button>
         </div>
       </article>
       <article class="story-chapter" id="mineral" aria-labelledby="mineral-title">
-        <div class="story-content"><div class="story-index">分析 / CHAPTER 03 · MINERAL</div>
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 04 · MINERAL</div>
           <h2 id="mineral-title">岩石之中，<br><em>矿物结晶。</em></h2>
           <p>从岩石走近矿物晶体，矿物以不同的方式组合，留下可以识别的纹理与解构。</p>
           <span class="story-en">FACET / COMPOSITION / ORDER</span>
-          <button class="story-next" type="button" data-next="3">深入原子</button>
+          <button class="story-next" type="button" data-next="4">深入原子</button>
         </div>
       </article>
       <article class="story-chapter" id="atom" aria-labelledby="atom-title">
-        <div class="story-content"><div class="story-index">分析 / CHAPTER 04 · ATOM</div>
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 05 · ATOM</div>
           <h2 id="atom-title">继续深入，<br><em>抵达原子。</em></h2>
           <p>组成矿物的元素进入视野。把成分转化为可整理、可比较的数据，尺度改变，关系也随之浮现。</p>
           <span class="story-en">ELEMENT / LATTICE / COORDINATE</span>
-          <button class="story-next" type="button" data-next="4">元素关系</button>
+          <button class="story-next" type="button" data-next="5">元素关系</button>
         </div>
       </article>
       <article class="story-chapter" id="field" aria-labelledby="field-title">
-        <div class="story-content"><div class="story-index">分析 / CHAPTER 05 · DATA FIELD</div>
+        <div class="story-content"><div class="story-index">分析 / CHAPTER 06 · DATA FIELD</div>
           <h2 id="field-title">让元素之间的<br><em>关系浮现。</em></h2>
           <p>大山深处，沉默为岩，坐标轴上，明亮如光。从这里，让每一份沉默的样本，都有迹可循，有理可解。</p>
           <div class="story-actions"><button class="primary" data-view="sort">现在开始 ↗</button></div>
@@ -81,4 +90,4 @@
     <label>图例透明度 <span class="legend-dual"><input id="legendTransparency" type="range" min="0" max="100" step="1" value="0"><input id="legendTransparencyNumber" type="number" min="0" max="100" step="0.1" value="0" aria-label="图例透明度百分比"><span>%</span></span></label>
   </div>
   <div class="legend-dialog-actions"><button id="legendReset" type="button" class="control-btn">恢复默认</button><button id="legendCancel" type="button" class="control-btn">取消</button><button id="legendApply" type="button" class="primary">应用</button></div>
-</dialog></div><div class="panel stats"><div class="panel-title">相关性分析 <label class="field method-field"><select aria-label="相关方法" id="method"><option value="pearson">Pearson</option><option value="spearman">Spearman</option></select></label></div><div id="stats" class="stat-grid"></div></div></div></div></section></main></div><script defer src="app.js?v=503deca5"></script><script defer src="story.js?v=1d52290f"></script></body></html>
+</dialog></div><div class="panel stats"><div class="panel-title">相关性分析 <label class="field method-field"><select aria-label="相关方法" id="method"><option value="pearson">Pearson</option><option value="spearman">Spearman</option></select></label></div><div id="stats" class="stat-grid"></div></div></div></div></section></main></div><script defer src="app.js?v=503deca5"></script><script defer src="story.js?v=d35040d6"></script></body></html>

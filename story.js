@@ -1,4 +1,4 @@
-// Five scenes are blended by scroll position; two contain small photographic apertures.
+// Six scenes are blended by scroll position; two contain small photographic apertures.
 (() => {
   const home = document.getElementById('home');
   if (!home) return;
@@ -9,6 +9,59 @@
     <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1" objectBoundingBox="true"><stop stop-color="#d5fcf3"/><stop offset=".46" stop-color="#74b2c5"/><stop offset="1" stop-color="#4e5a91"/></linearGradient>
     <radialGradient id="orb"><stop stop-color="#fff"/><stop offset=".19" stop-color="#e8c1e5"/><stop offset=".55" stop-color="#826999"/><stop offset="1" stop-color="#302943"/></radialGradient>
     ${defs}</defs>${body}</svg>`;
+
+  // Each orbit rotates around the star while its textured planet turns separately.
+  let starSeed = 41;
+  const starRandom = () => ((starSeed = (starSeed * 1664525 + 1013904223) >>> 0) / 4294967296);
+  let stars = '';
+  for (let i = 0; i < 78; i++) {
+    const x = 40 + starRandom() * 680;
+    const y = 40 + starRandom() * 680;
+    const radius = i % 11 === 0 ? 2.2 : i % 3 === 0 ? 1.2 : .65;
+    stars += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${radius}" fill="${i % 5 === 0 ? '#f6b9ed' : '#c7eff5'}" opacity="${(.23 + starRandom() * .55).toFixed(2)}"/>`;
+  }
+  const orbitingPlanet = (id, distance, radius, gradient, angle, orbitTime, spinTime, markings) => `
+    <g class="planet-revolution" transform="rotate(${angle} 380 380)" style="--orbit-period:${orbitTime}s;--orbit-phase:${(-angle / 360 * orbitTime).toFixed(2)}s">
+      <g transform="translate(${380 + distance} 380)">
+        <circle r="${radius + 8}" fill="#a6e9f7" opacity=".27" filter="url(#glow)"/>
+        <g class="planet-spin" style="--spin-period:${spinTime}s">
+          <circle r="${radius}" fill="url(#planet-${gradient})"/>
+          <g clip-path="url(#planet-clip-${id})">${markings}</g>
+        </g>
+        <circle r="${radius}" stroke="#e5ecff" stroke-opacity=".7" stroke-width="1.3"/>
+        <path d="M${-radius - 9} 0h-10m${radius * 2 + 38} 0h-10" stroke="#c4ecf5" stroke-opacity=".6"/>
+      </g>
+    </g>`;
+  const planetDefs = `
+    <radialGradient id="solar" cx=".32" cy=".28" r=".8"><stop stop-color="#fffdf5"/><stop offset=".24" stop-color="#ffe7ee"/><stop offset=".65" stop-color="#eea9d9"/><stop offset="1" stop-color="#755697"/></radialGradient>
+    <radialGradient id="planet-teal" cx=".29" cy=".22" r=".9"><stop stop-color="#e1faf6"/><stop offset=".47" stop-color="#6ec0c7"/><stop offset="1" stop-color="#294865"/></radialGradient>
+    <radialGradient id="planet-rose" cx=".29" cy=".22" r=".9"><stop stop-color="#ffe5e0"/><stop offset=".48" stop-color="#d797ad"/><stop offset="1" stop-color="#684465"/></radialGradient>
+    <radialGradient id="planet-blue" cx=".29" cy=".22" r=".9"><stop stop-color="#e8faff"/><stop offset=".52" stop-color="#8daace"/><stop offset="1" stop-color="#405183"/></radialGradient>
+    <radialGradient id="planet-amber" cx=".29" cy=".22" r=".9"><stop stop-color="#fff4db"/><stop offset=".52" stop-color="#ddb892"/><stop offset="1" stop-color="#8d6381"/></radialGradient>
+    <clipPath id="planet-clip-1"><circle r="22"/></clipPath><clipPath id="planet-clip-2"><circle r="29"/></clipPath>
+    <clipPath id="planet-clip-3"><circle r="25"/></clipPath><clipPath id="planet-clip-4"><circle r="18"/></clipPath>`;
+  const planet = svg(`
+    <circle cx="380" cy="380" r="326" stroke="#d9bcef" stroke-opacity=".18" stroke-dasharray="2 13"/>
+    <g>${stars}</g>
+    <path d="M380 45v47m0 578v45M45 380h46m579 0h45" stroke="#d2d7f2" stroke-opacity=".28"/>
+    <circle cx="380" cy="380" r="310" stroke="#b8c6e8" stroke-opacity=".34" stroke-width="1.5" stroke-dasharray="3 8"/>
+    <circle cx="380" cy="380" r="247" stroke="#cfaedf" stroke-opacity=".38" stroke-width="1.5"/>
+    <circle cx="380" cy="380" r="182" stroke="#9ed7e4" stroke-opacity=".43" stroke-width="1.5" stroke-dasharray="5 10"/>
+    <circle cx="380" cy="380" r="118" stroke="#e7badc" stroke-opacity=".52" stroke-width="1.5"/>
+    <circle cx="380" cy="380" r="87" stroke="#eecdec" stroke-opacity=".22" stroke-dasharray="2 7"/>
+    <circle class="solar-halo" cx="380" cy="380" r="64" fill="#f5bbec" opacity=".42" filter="url(#glow)"/>
+    <circle cx="380" cy="380" r="57" fill="url(#solar)" stroke="#fff0f7" stroke-width="2"/>
+    <circle cx="380" cy="380" r="70" stroke="#f8d4ef" stroke-opacity=".48" stroke-width="1.5"/>
+    <path d="M380 289v15m0 152v15M289 380h15m152 0h15" stroke="#fff3f8" stroke-opacity=".76"/>
+    ${orbitingPlanet(1,118,22,'teal',-68,18,5,`<path d="M-30-9Q-7-20 27-7M-31 5Q-10-3 31 4M-27 18Q0 10 25 18" stroke="#e0fff3" stroke-opacity=".64" stroke-width="5"/><path d="M-2-23Q12-4 1 24" stroke="#245780" stroke-opacity=".6" stroke-width="6"/>`)}
+    ${orbitingPlanet(2,182,29,'rose',136,27,7,`<path d="M-34-16Q-1-27 31-16M-37-4Q-1-11 33-2M-35 10Q-5 3 32 12M-30 23Q5 11 30 24" stroke="#ffded1" stroke-opacity=".62" stroke-width="6"/><circle cx="-15" cy="-5" r="6" stroke="#663c64" stroke-opacity=".65"/>`)}
+    ${orbitingPlanet(3,247,25,'blue',-160,35,6,`<path d="M-29-16Q-4-8 29-19M-28-2Q5 7 31-3M-29 13Q-6 4 31 14" stroke="#c2eaf5" stroke-opacity=".58" stroke-width="6"/><path d="M-11-27Q-4-4 7 27" stroke="#58658b" stroke-opacity=".68" stroke-width="7"/>`)}
+    ${orbitingPlanet(4,310,18,'amber',48,43,4,`<path d="M-22-8Q-3-14 22-7M-20 3Q1-3 21 6M-22 14Q1 9 20 15" stroke="#fff2ce" stroke-opacity=".63" stroke-width="4"/><circle cx="6" cy="-8" r="4" fill="#a2768a" opacity=".72"/>`)}
+    <path d="M141 166h82l24 24m266 402 28 62h83" stroke="#e2c2ee" stroke-opacity=".58"/>
+    <circle cx="141" cy="166" r="3" fill="#f4d2f5"/><circle cx="624" cy="654" r="3" fill="#b9eff4"/>
+    <text x="142" y="151" fill="#e8d0ed" font-family="monospace" font-size="10" letter-spacing="3">ORBITAL / 01</text>
+    <text x="526" y="679" fill="#bde6ed" font-family="monospace" font-size="10" letter-spacing="2">ROTATION ACTIVE</text>
+  `, planetDefs);
 
   const rock = svg(`
     <circle cx="391" cy="384" r="274" stroke="#e8badb" stroke-opacity=".19" stroke-dasharray="3 14"/>
@@ -149,12 +202,12 @@
     <g>${links}</g><g>${dots}</g>
     <circle cx="380" cy="380" r="74" stroke="#e3c5e9" stroke-opacity=".33" stroke-dasharray="3 8"/>
     <path d="M497 190h117v-27M162 542h89v31" stroke="#d0c4e6" stroke-opacity=".55"/>
-    <text x="498" y="180" fill="#ddd1e9" font-family="monospace" font-size="11" letter-spacing="3">DATA FIELD / 05</text>
+    <text x="498" y="180" fill="#ddd1e9" font-family="monospace" font-size="11" letter-spacing="3">DATA FIELD / 06</text>
     <text x="162" y="598" fill="#ddd1e9" font-family="monospace" font-size="11" letter-spacing="3">RELATION →</text>
   `);
 
-  const arts = [rock, microscope, mineral, atom, network];
-  const labels = ['岩石 / ROCK', '显微镜下 / THIN SECTION', '矿物 / MINERAL', '原子 / ATOM', '抽象点线 / DATA FIELD'];
+  const arts = [planet, rock, microscope, mineral, atom, network];
+  const labels = ['行星 / PLANET', '岩石 / ROCK', '显微镜下 / THIN SECTION', '矿物 / MINERAL', '原子 / ATOM', '抽象点线 / DATA FIELD'];
   const frame = home.querySelector('.story-art-frame');
   arts.forEach((art,i) => {
     const layer = document.createElement('div');
@@ -179,14 +232,14 @@
   const fictionalPlaces = ['Aster Ridge', 'Lumen Rise', 'Nacre Shelf', 'Echo Seamount', 'Prism Bay', 'Violet Basin'];
   const pick = values => values[Math.floor(Math.random()*values.length)];
   function refreshCaption(layer, photoIndex) {
-    const kind = layer.dataset.art === '0' ? 'rock' : 'microscope';
+    const kind = layer.dataset.art === '1' ? 'rock' : 'microscope';
     const lat = (11 + Math.random()*19).toFixed(4);
     const lon = (138 + Math.random()*35).toFixed(4);
     const lines = [pick(specimenNames[kind][photoIndex]), `${pick(fictionalPlaces)}, Pacific Ocean`, `${lat}°N, ${lon}°E`];
     const variant = photoIndex === 0 ? 'a' : 'b';
     layer.querySelectorAll(`.photo-scan-${variant} text`).forEach((text,i) => { text.textContent = lines[i]; });
   }
-  [0,1].forEach(index => {
+  [1,2].forEach(index => {
     const layer = frame.querySelector(`.story-art[data-art="${index}"]`);
     refreshCaption(layer,0);
     refreshCaption(layer,1);
@@ -211,15 +264,15 @@
     const header=top.getBoundingClientRect().height;
     home.style.setProperty('--header-height',`${header}px`);
     const screen=chapters[0].getBoundingClientRect().height || 1;
-    const progress=clamp((header-home.getBoundingClientRect().top)/screen,0,4);
+    const progress=clamp((header-home.getBoundingClientRect().top)/screen,0,chapters.length-1);
     const nearest=Math.round(progress);
     const fraction=progress-Math.floor(progress);
-    const transition=progress>=4?0:Math.max(0,1-Math.abs(fraction-.5)*3.1);
+    const transition=progress>=chapters.length-1?0:Math.max(0,1-Math.abs(fraction-.5)*3.1);
     if(nearest!==active){ active=nearest; burst=reduced?0:performance.now()+280; if(!reduced)setTimeout(queue,300); }
     const glitch=reduced?0:Math.max(transition*.9,performance.now() < burst ? .5 : 0);
     home.style.setProperty('--glitch',glitch.toFixed(2));
     home.classList.toggle('is-glitching',glitch>.3);
-    top.style.setProperty('--story-bar',`${((progress/4)*100).toFixed(1)}%`);
+    top.style.setProperty('--story-bar',`${((progress/(chapters.length-1))*100).toFixed(1)}%`);
     layers.forEach((layer,i) => {
       const opacity=clamp(1-Math.abs(progress-i),0,1);
       layer.style.opacity=opacity.toFixed(3);
@@ -229,7 +282,7 @@
     });
     buttons.forEach((b,i) => { b.classList.toggle('active',i===nearest); if(i===nearest)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
     readout.textContent=labels[nearest];
-    current.textContent=nearest===4?'05 / 05 · DATA FIELD':`${String(nearest+1).padStart(2,'0')} / 05 · SCROLL TO DESCEND`;
+    current.textContent=nearest===chapters.length-1?'06 / 06 · DATA FIELD':`${String(nearest+1).padStart(2,'0')} / 06 · SCROLL TO DESCEND`;
   }
   const queue=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update)}};
   window.addEventListener('scroll',queue,{passive:true});

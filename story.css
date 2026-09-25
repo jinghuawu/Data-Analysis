@@ -6,11 +6,12 @@
 .home:before{display:none}
 .home-story{position:relative}
 .home-visual{position:sticky;top:var(--header-height);height:var(--screen);overflow:hidden;z-index:0;pointer-events:none;background:#171624}
-.story-backdrop{position:absolute;inset:0;opacity:0;transition:opacity .12s linear;background:radial-gradient(ellipse at 71% 50%,#614769 0,#34283f 33%,transparent 66%),radial-gradient(ellipse at 18% 105%,#493253 0,transparent 48%),#171624}
-.story-backdrop:nth-child(2){background:radial-gradient(ellipse at 70% 49%,#355263 0,#272f42 37%,transparent 69%),#161e2c}
-.story-backdrop:nth-child(3){background:radial-gradient(ellipse at 71% 48%,#704863 0,#38293f 38%,transparent 70%),#1d192b}
-.story-backdrop:nth-child(4){background:radial-gradient(ellipse at 72% 48%,#344663 0,#242b48 42%,transparent 71%),#131a30}
-.story-backdrop:nth-child(5){background:radial-gradient(ellipse at 72% 48%,#3c385e 0,#25203a 41%,transparent 72%),#141323}
+.story-backdrop{position:absolute;inset:0;opacity:0;transition:opacity .12s linear;background:radial-gradient(ellipse at 71% 50%,#4b426d 0,#25243f 35%,transparent 69%),radial-gradient(ellipse at 18% 105%,#443257 0,transparent 48%),#131624}
+.story-backdrop:nth-child(2){background:radial-gradient(ellipse at 71% 50%,#614769 0,#34283f 33%,transparent 66%),radial-gradient(ellipse at 18% 105%,#493253 0,transparent 48%),#171624}
+.story-backdrop:nth-child(3){background:radial-gradient(ellipse at 70% 49%,#355263 0,#272f42 37%,transparent 69%),#161e2c}
+.story-backdrop:nth-child(4){background:radial-gradient(ellipse at 71% 48%,#704863 0,#38293f 38%,transparent 70%),#1d192b}
+.story-backdrop:nth-child(5){background:radial-gradient(ellipse at 72% 48%,#344663 0,#242b48 42%,transparent 71%),#131a30}
+.story-backdrop:nth-child(6){background:radial-gradient(ellipse at 72% 48%,#3c385e 0,#25203a 41%,transparent 72%),#141323}
 .home-visual:before{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,#17162498 0%,#17162422 49%,transparent 75%),repeating-linear-gradient(90deg,transparent 0 99px,#e9d2ff0c 100px),repeating-linear-gradient(0deg,transparent 0 99px,#e9d2ff0c 100px);pointer-events:none}
 .home-visual:after{content:"";position:absolute;inset:0;z-index:4;opacity:.3;background:repeating-linear-gradient(0deg,transparent 0 3px,#100e211b 4px 5px);pointer-events:none}
 .story-art-frame{position:absolute;width:min(60vw,820px);aspect-ratio:1;right:3%;top:48%;transform:translateY(-50%);z-index:1}
@@ -19,9 +20,12 @@
 .story-art{position:absolute;inset:0;opacity:0;will-change:opacity,transform;transform:translate3d(0,18px,0) scale(.96);transition:opacity .12s linear,transform .16s linear;filter:drop-shadow(0 20px 65px #0b081e91)}
 .story-art svg{width:100%;height:100%;overflow:visible}
 .story-art.is-current svg{animation:art-drift 9s ease-in-out infinite alternate}
-.story-art[data-art="1"] svg > g[clip-path]{transform-origin:380px 380px;animation:thin-section-turn 26s ease-in-out infinite alternate}
-.story-art[data-art="3"] .orbit-a,.story-art[data-art="3"] .orbit-b{transform-origin:380px 380px;animation:orbit-a 24s linear infinite}
-.story-art[data-art="3"] .orbit-b{animation-name:orbit-b;animation-duration:31s}
+.story-art[data-art="0"] .planet-revolution{transform-origin:380px 380px;animation:planet-revolve var(--orbit-period) linear var(--orbit-phase) infinite}
+.story-art[data-art="0"] .planet-spin{transform-box:fill-box;transform-origin:center;animation:planet-spin var(--spin-period) linear infinite}
+.story-art[data-art="0"] .solar-halo{transform-origin:380px 380px;animation:solar-breathe 5s ease-in-out infinite alternate}
+.story-art[data-art="2"] svg > g[clip-path]{transform-origin:380px 380px;animation:thin-section-turn 26s ease-in-out infinite alternate}
+.story-art[data-art="4"] .orbit-a,.story-art[data-art="4"] .orbit-b{transform-origin:380px 380px;animation:orbit-a 24s linear infinite}
+.story-art[data-art="4"] .orbit-b{animation-name:orbit-b;animation-duration:31s}
 .story-art .photo-cycle-b{opacity:0;animation:photo-cycle 11s ease-in-out infinite}
 @keyframes photo-cycle{0%,40%,100%{opacity:0}50%,90%{opacity:1}}
 .story-art .photo-scan-a{animation:scan-a 11s steps(1,end) infinite}.story-art .photo-scan-b{opacity:0;animation:scan-b 11s steps(1,end) infinite}
@@ -34,6 +38,9 @@
 @keyframes scan-flicker{0%,95%,100%{opacity:1}96%{opacity:.35}97%{opacity:.8}}
 .home.is-glitching .story-art.is-current{filter:drop-shadow(6px 0 #33d9e48c) drop-shadow(-6px 0 #ff75cd8c) drop-shadow(0 20px 65px #0b081e91)}
 @keyframes art-drift{from{transform:translateY(-5px) rotate(-1deg)}to{transform:translateY(7px) rotate(1deg)}}
+@keyframes planet-revolve{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes planet-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes solar-breathe{from{opacity:.3;transform:scale(.92)}to{opacity:.54;transform:scale(1.12)}}
 @keyframes thin-section-turn{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
 @keyframes orbit-a{from{transform:rotate(-29deg)}to{transform:rotate(331deg)}}
 @keyframes orbit-b{from{transform:rotate(62deg)}to{transform:rotate(-298deg)}}
@@ -77,7 +84,7 @@
 @media(max-width:900px){.story-art-frame{width:77vw;right:-9%;top:44%}.story-content{width:54vw}.story-content h1{font-size:clamp(3.7rem,7.6vw,6rem)}.story-content h2{font-size:clamp(3.4rem,7vw,5.8rem)}.chapter-nav{right:1.6vw}.chapter-nav button{font-size:.55rem}.story-readout{right:4.5vw}}
 @media(max-width:650px){.top{min-height:70px;top:0}.home-visual:before{background:linear-gradient(0deg,#151423 2%,#1716245c 49%,transparent 83%),repeating-linear-gradient(90deg,transparent 0 79px,#e9d2ff0a 80px),repeating-linear-gradient(0deg,transparent 0 79px,#e9d2ff0a 80px)}.story-art-frame{width:115vw;right:-34%;top:37%;opacity:.9}.story-art-frame:before{inset:17%}.story-copy{margin-top:calc(-1 * var(--screen))}.story-chapter{padding:9vh 22px 9vh;align-items:flex-end}.story-content,.story-chapter:last-child .story-content{width:100%;max-width:560px}.story-content h1,.story-content h2,.story-chapter:last-child h2{font-size:clamp(3.45rem,14vw,5rem);margin-bottom:17px}.story-content p{font-size:.92rem;line-height:1.65;max-width:390px}.story-index{font-size:.58rem;margin-bottom:17px}.story-en{display:none}.story-next{margin-top:22px}.story-meta{margin-top:23px;font-size:.57rem}.story-actions{margin-top:23px}.story-actions .primary,.story-actions .secondary{font-size:.75rem;padding:11px 13px}.story-readout{top:17px;right:17px;padding:7px 10px;min-width:0;font-size:.53rem}.story-readout strong{font-size:.7rem}.story-readout small{display:none}.chapter-nav{top:auto;bottom:16px;left:22px;right:22px;transform:none;flex-direction:row;justify-content:flex-end;gap:8px}.chapter-nav button{font-size:0;gap:0;padding:8px 2px}.chapter-nav button:after{width:17px}.chapter-nav button.active:after{width:30px}.story-corner{bottom:20px;left:22px;font-size:.53rem;gap:8px}.story-corner:before{width:12px}}
 @media(max-width:650px) and (max-height:680px){.story-art-frame{top:31%;width:94vw;right:-25%}.story-content h1,.story-content h2,.story-chapter:last-child h2{font-size:clamp(2.75rem,11vw,4rem)}.story-index{margin-bottom:10px}.story-content p{line-height:1.5}.story-actions{margin-top:14px}.story-meta{margin-top:12px}}
-@media(prefers-reduced-motion:reduce){.story-art,.story-backdrop,.chapter-nav button,.story-next:after{transition:none}.story-art.is-current svg,.story-art[data-art="1"] svg > g[clip-path],.story-art[data-art="3"] .orbit-a,.story-art[data-art="3"] .orbit-b,.story-glitch,.story-art .photo-cycle-b{animation:none}.story-art .photo-cycle-b,.story-glitch{display:none}}
+@media(prefers-reduced-motion:reduce){.story-art,.story-backdrop,.chapter-nav button,.story-next:after{transition:none}.story-art.is-current svg,.story-art[data-art="0"] .planet-revolution,.story-art[data-art="0"] .planet-spin,.story-art[data-art="0"] .solar-halo,.story-art[data-art="2"] svg > g[clip-path],.story-art[data-art="4"] .orbit-a,.story-art[data-art="4"] .orbit-b,.story-glitch,.story-art .photo-cycle-b{animation:none}.story-art .photo-cycle-b,.story-glitch{display:none}}
 @media(prefers-reduced-motion:reduce){.story-art .photo-scan,.story-art .photo-scan path,.story-art .photo-scan text{animation:none}.story-art .photo-scan-a path{stroke-dashoffset:0}.story-art .photo-scan-b{display:none}}
 
 /* Compact workbench controls. */
