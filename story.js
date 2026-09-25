@@ -250,6 +250,19 @@
   });
 
   const chapters = [...home.querySelectorAll('.story-chapter')];
+  // The chapter articles keep the scroll distance and jump targets. Their text
+  // lives in the same sticky viewport as the art, so both change together.
+  const copyFrame = document.createElement('div');
+  copyFrame.className = 'story-text-frame';
+  const copies = chapters.map((chapter,i) => {
+    const content = chapter.querySelector('.story-content');
+    content.dataset.scene = i;
+    content.setAttribute('aria-hidden','true');
+    chapter.setAttribute('aria-hidden','true');
+    copyFrame.append(content);
+    return content;
+  });
+  home.querySelector('.home-visual').append(copyFrame);
   const layers = [...home.querySelectorAll('.story-art')];
   const backgrounds = [...home.querySelectorAll('.story-backdrop')];
   const buttons = [...home.querySelectorAll('.chapter-nav button')];
@@ -283,6 +296,11 @@
       layer.style.transform=`translate3d(${((i-visualProgress)*24).toFixed(1)}px,${((i-visualProgress)*18).toFixed(1)}px,0) scale(${(1-Math.abs(visualProgress-i)*.065).toFixed(3)})`;
       layer.classList.toggle('is-current',i===nearest);
       backgrounds[i].style.opacity=opacity.toFixed(3);
+      copies[i].style.opacity=opacity.toFixed(3);
+      copies[i].style.visibility=opacity>0?'visible':'hidden';
+      copies[i].style.transform=`translate3d(0,${((i-visualProgress)*26).toFixed(1)}px,0)`;
+      copies[i].classList.toggle('is-current',i===nearest);
+      copies[i].setAttribute('aria-hidden',i===nearest?'false':'true');
     });
     buttons.forEach((b,i) => { b.classList.toggle('active',i===nearest); if(i===nearest)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
     readout.textContent=labels[nearest];
