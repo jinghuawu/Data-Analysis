@@ -204,6 +204,57 @@
     <text x="162" y="598" fill="#ddd1e9" font-family="monospace" font-size="11" letter-spacing="3">RELATION →</text>
   `);
 
+  // A restrained instrumentation layer brings the six natural scales into one
+  // visual system. It sits behind the specimen, while the scene-specific
+  // tracing and readouts sit above it; the original imagery stays legible.
+  const hudProfiles = [
+    {code:'ORB / 01',mode:'TRAJECTORY',signal:'0.86',cyan:'#89e5e7',hot:'#ffab83'},
+    {code:'LITH / 02',mode:'STRATA SCAN',signal:'0.74',cyan:'#7ee4df',hot:'#f9a393'},
+    {code:'XPL / 03',mode:'POLAR FIELD',signal:'0.92',cyan:'#89eced',hot:'#ffadd1'},
+    {code:'FACET / 04',mode:'REFRACTION',signal:'0.68',cyan:'#8be2f1',hot:'#ffa787'},
+    {code:'CELL / 05',mode:'LATTICE MAP',signal:'0.81',cyan:'#81dce9',hot:'#f4a9cd'},
+    {code:'NODE / 06',mode:'RELATION MAP',signal:'0.97',cyan:'#8ae7e5',hot:'#ffac8c'}
+  ];
+  const hudFeatures = [
+    `<g class="hud-feature" fill="none"><path d="M186 380a194 194 0 0 1 184-194M390 566a194 194 0 0 0 183-185"/><path d="M351 266h58m-29-29v58M550 298l25-14 24 17"/><circle cx="380" cy="186" r="7"/><circle cx="574" cy="380" r="4"/></g>`,
+    `<g class="hud-feature"><path d="M207 430 235 286 338 214 366 345 338 459 285 563Z" fill="currentColor" fill-opacity=".08"/><path d="M207 430 235 286 338 214 366 345 338 459 285 563" fill="none"/><path d="m239 326 78 3 25 34m-118 74 92 11 30-19m-64 98 58-37" fill="none"/><circle cx="235" cy="286" r="5"/><circle cx="338" cy="459" r="5"/></g>`,
+    `<g class="hud-feature" fill="none"><path d="M207 224a233 233 0 0 1 340-8M544 558a233 233 0 0 1-305 4"/><path d="M380 192v38m0 300v38M194 380h36m300 0h36"/><circle cx="380" cy="380" r="136" stroke-dasharray="2 12"/><path d="M488 236 527 214l26 23"/></g>`,
+    `<g class="hud-feature"><path d="m296 262 85-133 74 142-76 40Z" fill="currentColor" fill-opacity=".09"/><path d="M381 129 379 311 383 598M296 262l83 49 76-40M441 347l65 57 84-29" fill="none"/><path d="m258 237 24-40 29-4m200 391 44 24 36-12" fill="none"/></g>`,
+    `<g class="hud-feature" fill="none"><circle cx="380" cy="380" r="179" stroke-dasharray="4 16"/><path d="M236 236h36m-18-18v36M500 498h36m-18-18v36M380 177v28m0 350v28"/><path d="M179 380h60m282 0h60"/><circle cx="380" cy="380" r="109" stroke-dasharray="2 10"/></g>`,
+    `<g class="hud-feature" fill="none"><path d="M193 402 251 353 315 395 380 327 463 371 552 304M239 504l79-38 83 45 97-63"/><circle cx="251" cy="353" r="13"/><circle cx="463" cy="371" r="15"/><circle cx="401" cy="511" r="10"/><path d="M143 248h54m-27-27v54M545 530h57m-29-28v56"/></g>`
+  ];
+  const hudGrid = Array.from({length:9},(_,i) => {
+    const p=104+i*69;
+    return `<path d="M${p} 96v568M96 ${p}h568"/>`;
+  }).join('');
+  const hudTicks = Array.from({length:13},(_,i) => {
+    const p=116+i*44;
+    const length=i%3===0?17:8;
+    return `<path d="M${p} 94v${length}M${p} 666v-${length}M94 ${p}h${length}M666 ${p}h-${length}"/>`;
+  }).join('');
+  const hudOverlay = index => {
+    const profile=hudProfiles[index];
+    const dots=Array.from({length:12},(_,i) => {
+      const x=155+(i*47)%455, y=186+(i*83+index*37)%385;
+      return `<circle cx="${x}" cy="${y}" r="${i%4===0?2.7:1.5}"/>`;
+    }).join('');
+    return {
+      background:`<g class="hud-underlay" fill="none" stroke="${profile.cyan}"><g class="hud-grid">${hudGrid}</g><g class="hud-circuit"><path d="M80 286h60l30-33h87m-177 42h36l25 24h64M550 185h58l34 34h52M74 555h78l30-29h45M524 612h76l31-32h64"/><circle cx="257" cy="253" r="3"/><circle cx="205" cy="319" r="3"/><circle cx="550" cy="185" r="3"/><circle cx="227" cy="526" r="3"/></g><circle class="hud-radar-ring" cx="380" cy="380" r="304"/><g class="hud-dots">${dots}</g></g>`,
+      foreground:`<g class="hud-foreground" color="${profile.cyan}" stroke="currentColor" stroke-width="1.1">
+        ${hudFeatures[index]}
+        <g class="hud-trace" fill="none"><path d="M76 155V80h84M601 80h83v75M76 600v82h84M601 682h83v-82"/><path d="M380 63v24m0 586v24M63 380h24m586 0h24"/>${hudTicks}</g>
+        <g class="hud-orbit" fill="none"><circle cx="380" cy="380" r="303" stroke-dasharray="25 175" stroke-width="2.2"/></g>
+        <path class="hud-scan-line" d="M160 280h440" stroke="${profile.hot}" stroke-width="2"/>
+        <g class="hud-glitch-fragments" fill="${profile.hot}" stroke="none"><rect x="287" y="259" width="43" height="2"/><rect x="502" y="472" width="68" height="2"/><rect x="235" y="505" width="22" height="3"/></g>
+        <g class="hud-readouts" stroke="none" font-family="monospace">
+          <text x="84" y="65" fill="${profile.cyan}" font-size="10" letter-spacing="2.5">${profile.code} / LIVE</text>
+          <text x="676" y="65" text-anchor="end" fill="${profile.hot}" font-size="9" letter-spacing="1.3">● SIGNAL ${profile.signal}</text>
+          <text x="84" y="709" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">SCAN ${String(index+1).padStart(2,'0')} / 06 · ${profile.mode}</text>
+          <text x="676" y="709" text-anchor="end" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">Δ ${String(12+index*7).padStart(3,'0')}.42 / SYNC</text>
+        </g>
+      </g>`
+    };
+  };
   const arts = [planet, rock, microscope, mineral, atom, network];
   const labels = ['行星 / PLANET', '岩石 / ROCK', '显微镜下 / THIN SECTION', '矿物 / MINERAL', '原子 / ATOM', '抽象点线 / DATA FIELD'];
   const frame = home.querySelector('.story-art-frame');
@@ -212,7 +263,8 @@
     layer.className='story-art';
     layer.setAttribute('aria-hidden','true');
     layer.dataset.art=i;
-    layer.innerHTML=art;
+    const hud=hudOverlay(i);
+    layer.innerHTML=art.replace('</defs>',`</defs>${hud.background}`).replace('</svg>',`${hud.foreground}</svg>`);
     frame.append(layer);
   });
 
