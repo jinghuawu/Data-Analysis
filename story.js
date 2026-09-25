@@ -248,7 +248,7 @@
         <g class="hud-glitch-fragments" fill="${profile.hot}" stroke="none"><rect x="287" y="259" width="43" height="2"/><rect x="502" y="472" width="68" height="2"/><rect x="235" y="505" width="22" height="3"/></g>
         <g class="hud-readouts" stroke="none" font-family="monospace">
           <text x="84" y="65" fill="${profile.cyan}" font-size="10" letter-spacing="2.5">${profile.code} / LIVE</text>
-          <text x="676" y="65" text-anchor="end" fill="${profile.hot}" font-size="9" letter-spacing="1.3">● SIGNAL ${profile.signal}</text>
+          <text x="84" y="654" fill="${profile.hot}" font-size="9" letter-spacing="1.3">● SIGNAL ${profile.signal}</text>
           <text x="84" y="709" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">SCAN ${String(index+1).padStart(2,'0')} / 06 · ${profile.mode}</text>
           <text x="676" y="709" text-anchor="end" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">Δ ${String(12+index*7).padStart(3,'0')}.42 / SYNC</text>
         </g>
