@@ -208,12 +208,12 @@
   // visual system. It sits behind the specimen, while the scene-specific
   // tracing and readouts sit above it; the original imagery stays legible.
   const hudProfiles = [
-    {code:'ORB / 01',mode:'TRAJECTORY',signal:'0.86',cyan:'#89e5e7',hot:'#ffab83'},
-    {code:'LITH / 02',mode:'STRATA SCAN',signal:'0.74',cyan:'#7ee4df',hot:'#f9a393'},
-    {code:'XPL / 03',mode:'POLAR FIELD',signal:'0.92',cyan:'#89eced',hot:'#ffadd1'},
-    {code:'FACET / 04',mode:'REFRACTION',signal:'0.68',cyan:'#8be2f1',hot:'#ffa787'},
-    {code:'CELL / 05',mode:'LATTICE MAP',signal:'0.81',cyan:'#81dce9',hot:'#f4a9cd'},
-    {code:'NODE / 06',mode:'RELATION MAP',signal:'0.97',cyan:'#8ae7e5',hot:'#ffac8c'}
+    {code:'ORB / 01',mode:'RADAR COORDINATES',signal:'0.86',cyan:'#89e5e7',hot:'#ffab83'},
+    {code:'LITH / 02',mode:'FRACTURE STUDY',signal:'0.74',cyan:'#7ee4df',hot:'#f9a393'},
+    {code:'XPL / 03',mode:'MONITOR / XPL',signal:'0.92',cyan:'#89eced',hot:'#ffadd1'},
+    {code:'FACET / 04',mode:'SPECTRAL REFRACTION',signal:'0.68',cyan:'#8be2f1',hot:'#ffa787'},
+    {code:'CELL / 05',mode:'CURRENT TRACE',signal:'0.81',cyan:'#81dce9',hot:'#f4a9cd'},
+    {code:'NODE / 06',mode:'PACKET FLOW',signal:'0.97',cyan:'#8ae7e5',hot:'#ffac8c'}
   ];
   const hudFeatures = [
     `<g class="hud-feature" fill="none"><path d="M186 380a194 194 0 0 1 184-194M390 566a194 194 0 0 0 183-185"/><path d="M351 266h58m-29-29v58M550 298l25-14 24 17"/><circle cx="380" cy="186" r="7"/><circle cx="574" cy="380" r="4"/></g>`,
@@ -223,29 +223,42 @@
     `<g class="hud-feature" fill="none"><circle cx="380" cy="380" r="179" stroke-dasharray="4 16"/><path d="M236 236h36m-18-18v36M500 498h36m-18-18v36M380 177v28m0 350v28"/><path d="M179 380h60m282 0h60"/><circle cx="380" cy="380" r="109" stroke-dasharray="2 10"/></g>`,
     `<g class="hud-feature" fill="none"><path d="M193 402 251 353 315 395 380 327 463 371 552 304M239 504l79-38 83 45 97-63"/><circle cx="251" cy="353" r="13"/><circle cx="463" cy="371" r="15"/><circle cx="401" cy="511" r="10"/><path d="M143 248h54m-27-27v54M545 530h57m-29-28v56"/></g>`
   ];
-  const hudGrid = Array.from({length:9},(_,i) => {
-    const p=104+i*69;
-    return `<path d="M${p} 96v568M96 ${p}h568"/>`;
+  const radarSpokes = Array.from({length:12},(_,i) => {
+    const a=i*Math.PI/6;
+    const x1=(380+282*Math.cos(a)).toFixed(1),y1=(380+282*Math.sin(a)).toFixed(1);
+    const x2=(380+306*Math.cos(a)).toFixed(1),y2=(380+306*Math.sin(a)).toFixed(1);
+    return `<path d="M${x1} ${y1} ${x2} ${y2}"/>`;
   }).join('');
-  const hudTicks = Array.from({length:13},(_,i) => {
-    const p=116+i*44;
-    const length=i%3===0?17:8;
-    return `<path d="M${p} 94v${length}M${p} 666v-${length}M94 ${p}h${length}M666 ${p}h-${length}"/>`;
+  const monitorLines = Array.from({length:23},(_,i) => `<path d="M160 ${172+i*19}h440"/>`).join('');
+  const codeRows = Array.from({length:9},(_,i) => {
+    const value=(0x1a3f+i*0x2d7).toString(16).toUpperCase();
+    return `<text x="${i%2?603:106}" y="${180+i*51}" text-anchor="${i%2?'end':'start'}">${value} : ${String(i*17+41).padStart(3,'0')}</text>`;
   }).join('');
+  const hudBackdrops = [
+    `<g class="hud-radar-dial" fill="none"><circle cx="380" cy="380" r="303"/><circle cx="380" cy="380" r="265"/><circle cx="380" cy="380" r="132"/><path d="M380 62v636M62 380h636"/>${radarSpokes}</g><text x="377" y="96" text-anchor="middle">000°</text><text x="680" y="375">090°</text>`,
+    `<g class="hud-strata" fill="none"><path d="M166 257 210 238 314 256 394 233 475 250M143 350 212 333 323 356 408 331 504 347M154 465 238 443 331 465 412 438 569 462M183 576 263 553 363 571 443 550 581 569"/><path d="M222 201 195 426 240 559m297-350 36 171-33 189" stroke-dasharray="3 11"/></g>`,
+    `<g class="hud-monitor-frame" fill="none"><path d="M168 118h425l39 37v444l-40 40H170l-40-38V157Z"/><path d="M168 118v34h-38m463-34v34h39M130 601h38v38m464-38h-39v38"/><path d="M174 153h54m331 0h42M174 604h54m331 0h42"/></g>`,
+    `<g class="hud-prism-field" fill="none"><path d="M381 115 198 438 122 582M381 115 533 263 659 350M381 115 585 502 643 591M381 115 370 640"/><path d="M175 564 381 115 610 570" stroke-dasharray="3 14"/><circle cx="381" cy="115" r="12"/></g>`,
+    `<g class="hud-board" fill="none"><path d="M76 235h98v36h71v54h72M89 525h87v-52h88v-60h84M683 203h-91v53h-75v62h-51M682 555h-84v-49h-80v-59h-66M175 271v-80h48m-47 282v86h56m361-303v-83h-50m55 333v75h-53"/><circle cx="174" cy="271" r="5"/><circle cx="264" cy="473" r="5"/><circle cx="517" cy="256" r="5"/><circle cx="518" cy="506" r="5"/></g>`,
+    `<g class="hud-data-grid" fill="none"><path d="M122 170h516M122 590h516M146 146v467m468-467v467" stroke-dasharray="3 13"/><path d="M119 315h50m425 0h49M119 446h50m425 0h49"/></g><g class="hud-code-column" font-family="monospace" font-size="9">${codeRows}</g>`
+  ];
+  const hudMotions = profile => [
+    `<g class="hud-radar-sweep hud-animated" fill="none"><path d="M380 380 380 78A302 302 0 0 1 527 116Z" fill="currentColor" fill-opacity=".085"/><path d="M380 380V78" stroke-width="2"/></g><g class="hud-radar-ping hud-animated" fill="none"><circle cx="574" cy="380" r="15"/><circle cx="574" cy="380" r="28"/></g>`,
+    `<g class="hud-rock-slice hud-animated"><path d="M207 430 235 286 338 214 366 345 338 459 285 563Z" fill="currentColor" fill-opacity=".12"/><path d="m207 430 159-85-28 114-53 104" fill="none"/></g><g class="hud-rock-cracks" fill="none"><path d="M207 430 260 395 298 411 338 459 285 563M338 214 310 273 366 345 338 459"/></g><g class="hud-rock-shards" fill="${profile.hot}" stroke="none"><path class="hud-shard-a hud-animated" d="m171 341 32-20-4 42-21 11Z"/><path class="hud-shard-b hud-animated" d="m597 316 27-22 13 32-32 19Z"/><path class="hud-shard-c hud-animated" d="m390 625 36-17 15 31-39 15Z"/></g>`,
+    `<g clip-path="url(#lensClip)"><g class="hud-monitor-lines">${monitorLines}</g><path class="hud-monitor-beam hud-animated" d="M145 245h475" stroke="${profile.hot}" stroke-width="2"/><g class="hud-monitor-tear hud-animated" fill="${profile.hot}" stroke="none"><rect x="188" y="313" width="312" height="11"/><rect x="294" y="326" width="221" height="3"/><rect x="175" y="499" width="362" height="5"/></g></g><g class="hud-monitor-status" fill="none"><path d="M561 240h41m-41 10h26m-26 10h34"/><circle cx="561" cy="221" r="4" fill="${profile.hot}"/></g>`,
+    `<g class="hud-spectrum hud-animated" stroke="none"><path d="M455 271 617 310 668 354 506 404Z" fill="${profile.cyan}" fill-opacity=".11"/><path d="M455 271 626 338 667 383 506 404Z" fill="${profile.hot}" fill-opacity=".075"/></g><g class="hud-prism-rays hud-animated" fill="none"><path d="M455 271 616 311M455 271 639 358M455 271 624 414M381 129 298 262M381 129 441 347"/></g><path class="hud-facet-flash hud-animated" d="M381 129 455 271 379 311 383 598" fill="none" stroke="#fff2f9" stroke-width="2"/>`,
+    `<g class="hud-current hud-animated" fill="none"><path d="M76 235h98v36h71v54h72l63 55 86-62h51v-62h75v-53h91M89 525h87v-52h88v-60h84l32-33 72 67h66v59h80v49h84"/></g><g class="hud-chip-pads hud-animated" fill="none"><circle cx="174" cy="271" r="13"/><circle cx="517" cy="256" r="13"/><circle cx="264" cy="473" r="13"/><circle cx="518" cy="506" r="13"/></g>`,
+    `<g class="hud-data-route hud-animated" fill="none"><path d="M193 402 251 353 315 395 380 327 463 371 552 304M239 504l79-38 83 45 97-63"/></g><g class="hud-data-pulses hud-animated" fill="none"><circle cx="251" cy="353" r="17"/><circle cx="463" cy="371" r="18"/><circle cx="401" cy="511" r="15"/></g><path class="hud-data-cursor hud-animated" d="M547 624h58" stroke="${profile.hot}" stroke-width="2"/>`
+  ];
   const hudOverlay = index => {
     const profile=hudProfiles[index];
-    const dots=Array.from({length:12},(_,i) => {
-      const x=155+(i*47)%455, y=186+(i*83+index*37)%385;
-      return `<circle cx="${x}" cy="${y}" r="${i%4===0?2.7:1.5}"/>`;
-    }).join('');
+    const background=hudBackdrops[index];
+    const foreground=hudMotions(profile)[index];
     return {
-      background:`<g class="hud-underlay" fill="none" stroke="${profile.cyan}"><g class="hud-grid">${hudGrid}</g><g class="hud-circuit"><path d="M80 286h60l30-33h87m-177 42h36l25 24h64M550 185h58l34 34h52M74 555h78l30-29h45M524 612h76l31-32h64"/><circle cx="257" cy="253" r="3"/><circle cx="205" cy="319" r="3"/><circle cx="550" cy="185" r="3"/><circle cx="227" cy="526" r="3"/></g><circle class="hud-radar-ring" cx="380" cy="380" r="304"/><g class="hud-dots">${dots}</g></g>`,
+      background:`<g class="hud-underlay" fill="none" stroke="${profile.cyan}">${background}</g>`,
       foreground:`<g class="hud-foreground" color="${profile.cyan}" stroke="currentColor" stroke-width="1.1">
         ${hudFeatures[index]}
-        <g class="hud-trace" fill="none"><path d="M76 155V80h84M601 80h83v75M76 600v82h84M601 682h83v-82"/><path d="M380 63v24m0 586v24M63 380h24m586 0h24"/>${hudTicks}</g>
-        <g class="hud-orbit" fill="none"><circle cx="380" cy="380" r="303" stroke-dasharray="25 175" stroke-width="2.2"/></g>
-        <path class="hud-scan-line" d="M160 280h440" stroke="${profile.hot}" stroke-width="2"/>
-        <g class="hud-glitch-fragments" fill="${profile.hot}" stroke="none"><rect x="287" y="259" width="43" height="2"/><rect x="502" y="472" width="68" height="2"/><rect x="235" y="505" width="22" height="3"/></g>
+        ${foreground}
         <g class="hud-readouts" stroke="none" font-family="monospace">
           <text x="84" y="65" fill="${profile.cyan}" font-size="10" letter-spacing="2.5">${profile.code} / LIVE</text>
           <text x="84" y="654" fill="${profile.hot}" font-size="9" letter-spacing="1.3">● SIGNAL ${profile.signal}</text>

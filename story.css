@@ -20,21 +20,65 @@
 .story-art{position:absolute;inset:0;opacity:0;will-change:opacity,transform;transform:translate3d(0,18px,0) scale(.96);transition:opacity .12s linear,transform .16s linear;filter:drop-shadow(0 20px 65px #0b081e91)}
 .story-art svg{width:100%;height:100%;overflow:visible}
 .story-art.is-current svg{animation:art-drift 9s ease-in-out infinite alternate}
-.hud-grid{opacity:.11;stroke-width:.65;stroke-dasharray:2 7}
-.hud-circuit{opacity:.36;stroke-width:1.25}
-.hud-radar-ring{opacity:.44;stroke-width:1.2;stroke-dasharray:2 13}
-.hud-dots{fill:#d7fdff;stroke:none;opacity:.42}
 .hud-feature{opacity:.59;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
-.hud-trace{fill:none;opacity:.53}
 .hud-readouts{opacity:.8;paint-order:stroke;stroke:#171a2b;stroke-width:2px;stroke-opacity:.65}
-.hud-orbit{opacity:.72;transform-origin:380px 380px;animation:hud-orbit 34s linear infinite;animation-play-state:paused}
-.hud-scan-line{opacity:0;filter:drop-shadow(0 0 9px #fa91bd);animation:hud-scan 8s linear infinite;animation-play-state:paused}
-.hud-glitch-fragments{opacity:0;animation:hud-fracture 9s steps(1,end) infinite;animation-play-state:paused}
-.story-art.is-current .hud-orbit,.story-art.is-current .hud-scan-line,.story-art.is-current .hud-glitch-fragments{animation-play-state:running}
-.home.is-glitching .story-art.is-current .hud-glitch-fragments{animation:none;opacity:.8;transform:translateX(5px)}
-@keyframes hud-orbit{to{transform:rotate(360deg)}}
-@keyframes hud-scan{0%{opacity:0;transform:translateY(-175px)}10%{opacity:.63}86%{opacity:.46}100%{opacity:0;transform:translateY(350px)}}
-@keyframes hud-fracture{0%,67%,71%,100%{opacity:0;transform:translateX(0)}68%{opacity:.65;transform:translateX(9px)}69%{opacity:.4;transform:translateX(-7px)}70%{opacity:.75;transform:translateX(3px)}}
+.hud-underlay text{fill:#b7e8e9;stroke:none;opacity:.65;font:8px monospace;letter-spacing:1px}
+.story-art .hud-animated{animation-play-state:paused}
+.story-art.is-current .hud-animated{animation-play-state:running}
+/* 01 · Orbital radar: a rotating sector and a transponder ping. */
+.hud-radar-dial{opacity:.38;stroke-width:1;stroke-dasharray:3 12}
+.hud-radar-dial path:first-of-type{stroke-dasharray:2 18}
+.hud-radar-sweep{opacity:.62;transform-origin:380px 380px;animation:radar-sweep 15s linear infinite}
+.hud-radar-ping{stroke:#ffb38b;stroke-width:1.4;transform-origin:574px 380px;animation:radar-ping 4.5s ease-out infinite}
+@keyframes radar-sweep{to{transform:rotate(360deg)}}
+@keyframes radar-ping{0%,100%{opacity:0;transform:scale(.55)}22%{opacity:.8}70%{opacity:.12;transform:scale(1.4)}}
+/* 02 · Lithology: a translucent cross section and detached shards. */
+.hud-strata{opacity:.43;stroke-width:1.3}
+.hud-rock-slice{opacity:.65;stroke-width:1.8;animation:rock-expose 7s ease-in-out infinite alternate}
+.hud-rock-cracks{opacity:.48;stroke-width:1.4;stroke-dasharray:3 7}
+.hud-rock-shards{opacity:.7}
+.hud-rock-shards path{transform-box:fill-box;transform-origin:center}
+.hud-shard-a{animation:shard-a 7s ease-in-out infinite alternate}
+.hud-shard-b{animation:shard-b 8s ease-in-out infinite alternate}
+.hud-shard-c{animation:shard-c 6.5s ease-in-out infinite alternate}
+@keyframes rock-expose{to{opacity:.28;transform:translateX(-7px)}}
+@keyframes shard-a{to{transform:translate(-13px,-16px) rotate(-11deg)}}
+@keyframes shard-b{to{transform:translate(16px,-8px) rotate(9deg)}}
+@keyframes shard-c{to{transform:translate(5px,17px) rotate(-7deg)}}
+/* 03 · Thin section: an optical monitor with controlled signal loss. */
+.hud-monitor-frame{opacity:.54;stroke-width:1.3}
+.hud-monitor-lines{opacity:.12;stroke-width:.75}
+.hud-monitor-beam{opacity:0;filter:drop-shadow(0 0 8px #ffaad6);animation:monitor-scan 7s linear infinite}
+.hud-monitor-tear{opacity:0;animation:monitor-tear 8.5s steps(1,end) infinite}
+.hud-monitor-status{opacity:.65;stroke-width:1.5}
+.story-art[data-art="2"] .hud-feature{opacity:.24}
+@keyframes monitor-scan{0%{opacity:0;transform:translateY(-94px)}12%{opacity:.55}85%{opacity:.25}100%{opacity:0;transform:translateY(340px)}}
+@keyframes monitor-tear{0%,62%,66%,100%{opacity:0;transform:translateX(0)}63%{opacity:.22;transform:translateX(11px)}64%{opacity:.15;transform:translateX(-8px)}65%{opacity:.28;transform:translateX(4px)}}
+/* 04 · Mineral: refraction fans out from the crystal apex. */
+.hud-prism-field{opacity:.32;stroke-width:1.2}
+.hud-spectrum{animation:prism-breathe 6s ease-in-out infinite alternate}
+.hud-prism-rays{opacity:.64;stroke:#8aeaf0;stroke-width:1.5;stroke-dasharray:42 135;animation:prism-rays 8s linear infinite}
+.hud-facet-flash{opacity:.72;stroke-dasharray:38 480;animation:prism-flash 7s ease-in-out infinite}
+@keyframes prism-breathe{from{opacity:.25}to{opacity:.88}}
+@keyframes prism-rays{to{stroke-dashoffset:-177}}
+@keyframes prism-flash{0%{stroke-dashoffset:450;opacity:0}35%{opacity:.78}100%{stroke-dashoffset:0;opacity:0}}
+/* 05 · Atom: current runs through a circuit around the lattice. */
+.hud-board{opacity:.53;stroke-width:1.5}
+.hud-board circle{fill:#21334b;stroke:#92e6e8;stroke-width:1.4}
+.hud-current{opacity:.85;stroke:#f0b6e6;stroke-width:2.4;stroke-dasharray:6 27;animation:current-flow 5s linear infinite}
+.hud-chip-pads{stroke:#a5f3f0;stroke-width:1.6;animation:pad-pulse 3s ease-in-out infinite alternate}
+@keyframes current-flow{to{stroke-dashoffset:-132}}
+@keyframes pad-pulse{from{opacity:.18}to{opacity:.78}}
+/* 06 · Data: code columns and packets travel over selected graph paths. */
+.hud-data-grid{opacity:.36;stroke-width:1}
+.hud-code-column{opacity:.4;animation:code-drift 9s linear infinite alternate}
+.hud-data-route{stroke:#8cf3ee;stroke-width:2.4;stroke-dasharray:4 17;animation:packet-flow 5s linear infinite}
+.hud-data-pulses{stroke:#ffc0e5;stroke-width:1.7;animation:packet-pulse 3.8s ease-in-out infinite alternate}
+.hud-data-cursor{opacity:.4;animation:cursor-blink 1.4s steps(1,end) infinite}
+@keyframes code-drift{to{transform:translateY(-22px);opacity:.2}}
+@keyframes packet-flow{to{stroke-dashoffset:-168}}
+@keyframes packet-pulse{from{opacity:.15}to{opacity:.8}}
+@keyframes cursor-blink{50%{opacity:.95}}
 .story-art[data-art="0"] .planet-revolution{transform-origin:380px 380px;animation:planet-revolve var(--orbit-period) linear var(--orbit-phase) infinite}
 .story-art[data-art="0"] .planet-spin{transform-box:fill-box;transform-origin:center;animation:planet-spin var(--spin-period) linear infinite}
 .story-art[data-art="0"] .solar-halo{transform-origin:380px 380px;animation:solar-breathe 5s ease-in-out infinite alternate}
@@ -111,9 +155,9 @@
 @media(max-width:900px){.story-text-frame .story-content{width:54vw}.story-text-frame .story-content:last-child{width:57vw}}
 @media(max-width:650px){.story-text-frame .story-content,.story-text-frame .story-content:last-child{left:22px;right:22px;width:auto;max-width:560px;padding:9vh 0;justify-content:flex-end}.story-text-frame .story-content:last-child h2{font-size:clamp(3.45rem,14vw,5rem)}}
 @media(max-width:650px) and (max-height:680px){.story-art-frame{top:31%;width:94vw;right:-25%}.story-content h1,.story-content h2,.story-chapter:last-child h2{font-size:clamp(2.75rem,11vw,4rem)}.story-index{margin-bottom:10px}.story-content p{line-height:1.5}.story-actions{margin-top:14px}.story-meta{margin-top:12px}}
-@media(max-width:650px){.hud-grid,.hud-circuit{opacity:.15}.hud-readouts{opacity:.62}}
+@media(max-width:650px){.hud-underlay{opacity:.65}.hud-readouts{opacity:.62}}
 @media(prefers-reduced-motion:reduce){.story-art,.story-backdrop,.chapter-nav button,.story-next:after{transition:none}.story-art.is-current svg,.story-art[data-art="0"] .planet-revolution,.story-art[data-art="0"] .planet-spin,.story-art[data-art="0"] .solar-halo,.story-art[data-art="2"] svg > g[clip-path],.story-art[data-art="4"] .orbit-a,.story-art[data-art="4"] .orbit-b,.story-glitch,.story-art .photo-cycle-b{animation:none}.story-art .photo-cycle-b,.story-glitch{display:none}}
-@media(prefers-reduced-motion:reduce){.hud-orbit,.hud-scan-line,.hud-glitch-fragments{animation:none}.hud-scan-line,.hud-glitch-fragments{display:none}}
+@media(prefers-reduced-motion:reduce){.hud-animated{animation:none!important}.hud-monitor-beam,.hud-monitor-tear{display:none}}
 @media(prefers-reduced-motion:reduce){.story-text-frame .story-content{transition:none}}
 @media(prefers-reduced-motion:reduce){.story-art .photo-scan,.story-art .photo-scan path,.story-art .photo-scan text{animation:none}.story-art .photo-scan-a path{stroke-dashoffset:0}.story-art .photo-scan-b{display:none}}
 @media(prefers-reduced-motion:reduce){.story-art[data-art="2"] .micro-photo{transition:none}.story-art[data-art="2"] .micro-scan.is-refreshing path{animation:none}}
