@@ -273,7 +273,9 @@
       grid += `<text x="${px}" y="432" text-anchor="middle" fill="#657482" font-size="12">${fmt(xmin + (xmax - xmin) * i / 5)}</text>`;
       grid += `<text x="70" y="${py + 4}" text-anchor="end" fill="#657482" font-size="12">${fmt(ymin + (ymax - ymin) * i / 5)}</text>`;
     }
-    const circles = points.map(([a, b]) => `<circle cx="${plotX(a).toFixed(2)}" cy="${plotY(b).toFixed(2)}" r="2.8" fill="#756393" fill-opacity=".32"/>`).join('');
+    const dotSize = points.length <= 200 ? 4 : 2.8;
+    const dotOpacity = points.length <= 200 ? .7 : .3;
+    const circles = points.map(([a, b]) => `<circle cx="${plotX(a).toFixed(2)}" cy="${plotY(b).toFixed(2)}" r="${dotSize}" fill="#69518e" fill-opacity="${dotOpacity}"/>`).join('');
     $('mineralChart').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" role="img" aria-label="${escapeHtml(output.columns[x])} 对 ${escapeHtml(output.columns[y])} 的有效组合散点图"><rect width="900" height="500" fill="#fff"/>${grid}<line x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" stroke="#758894"/><line x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" stroke="#758894"/><g clip-path="url(#mineralClip)">${circles}</g><defs><clipPath id="mineralClip"><rect x="${left}" y="${top}" width="${right - left}" height="${bottom - top}"/></clipPath></defs><text x="478" y="480" text-anchor="middle" fill="#253541" font-size="16">${escapeHtml(output.columns[x])}</text><text transform="translate(22 218) rotate(-90)" text-anchor="middle" fill="#253541" font-size="16">${escapeHtml(output.columns[y])}</text></svg>`;
     $('mineralPlotTitle').textContent = `${output.columns[x]} vs ${output.columns[y]}`;
     $('mineralPlotNote').textContent = `展示 ${points.length.toLocaleString('zh-CN')} / ${output.valid.toLocaleString('zh-CN')} 组有效结果${output.valid > points.length ? '（固定种子的均匀抽样）' : ''}；下载的 CSV 包含全部结果。`;
