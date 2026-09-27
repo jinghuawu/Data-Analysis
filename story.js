@@ -177,7 +177,7 @@
     <ellipse class="orbit-b" cx="380" cy="380" rx="244" ry="76" transform="rotate(62 380 380)" stroke="#9ee0e5" stroke-opacity=".5" stroke-width="2"/>
     <circle cx="176" cy="470" r="5" fill="#f6d0f2"/><circle cx="548" cy="495" r="5" fill="#a5edf1"/>
     <path d="M136 172h81m-81 0v22M545 586h74m0-22v22" stroke="#bdd3e5" stroke-opacity=".6"/>
-    <text x="136" y="157" fill="#d7d5eb" font-family="monospace" font-size="11" letter-spacing="3">LATTICE / 04</text>
+    <text x="136" y="157" fill="#d7d5eb" font-family="monospace" font-size="11" letter-spacing="3">LATTICE / 05</text>
     <text x="548" y="609" fill="#d7d5eb" font-family="monospace" font-size="11" letter-spacing="2">Si — O</text>
   `);
 
@@ -250,33 +250,35 @@
     `<g class="hud-current hud-animated" fill="none"><path d="M76 235h98v36h71v54h72l63 55 86-62h51v-62h75v-53h91M89 525h87v-52h88v-60h84l32-33 72 67h66v59h80v49h84"/></g><g class="hud-chip-pads hud-animated" fill="none"><circle cx="174" cy="271" r="13"/><circle cx="517" cy="256" r="13"/><circle cx="264" cy="473" r="13"/><circle cx="518" cy="506" r="13"/></g>`,
     `<g class="hud-data-route hud-animated" fill="none"><path d="M193 402 251 353 315 395 380 327 463 371 552 304M239 504l79-38 83 45 97-63"/></g><g class="hud-data-pulses hud-animated" fill="none"><circle cx="251" cy="353" r="17"/><circle cx="463" cy="371" r="18"/><circle cx="401" cy="511" r="15"/></g><path class="hud-data-cursor hud-animated" d="M547 624h58" stroke="${profile.hot}" stroke-width="2"/>`
   ];
-  const hudOverlay = index => {
-    const profile=hudProfiles[index];
-    const background=hudBackdrops[index];
-    const foreground=hudMotions(profile)[index];
+  const hudOverlay = (kind,scene) => {
+    const profile=hudProfiles[kind];
+    const background=hudBackdrops[kind];
+    const foreground=hudMotions(profile)[kind];
     return {
       background:`<g class="hud-underlay" fill="none" stroke="${profile.cyan}">${background}</g>`,
       foreground:`<g class="hud-foreground" color="${profile.cyan}" stroke="currentColor" stroke-width="1.1">
-        ${hudFeatures[index]}
+        ${hudFeatures[kind]}
         ${foreground}
         <g class="hud-readouts" stroke="none" font-family="monospace">
-          <text x="84" y="65" fill="${profile.cyan}" font-size="10" letter-spacing="2.5">${profile.code} / LIVE</text>
+          <text x="84" y="65" fill="${profile.cyan}" font-size="10" letter-spacing="2.5">${profile.code.replace(/\d{2}$/,String(scene+1).padStart(2,'0'))} / LIVE</text>
           <text x="84" y="654" fill="${profile.hot}" font-size="9" letter-spacing="1.3">● SIGNAL ${profile.signal}</text>
-          <text x="84" y="709" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">SCAN ${String(index+1).padStart(2,'0')} / 06 · ${profile.mode}</text>
-          <text x="676" y="709" text-anchor="end" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">Δ ${String(12+index*7).padStart(3,'0')}.42 / SYNC</text>
+          <text x="84" y="709" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">SCAN ${String(scene+1).padStart(2,'0')} / 06 · ${profile.mode}</text>
+          <text x="676" y="709" text-anchor="end" fill="${profile.cyan}" font-size="9" letter-spacing="1.5">Δ ${String(12+scene*7).padStart(3,'0')}.42 / SYNC</text>
         </g>
       </g>`
     };
   };
   const arts = [planet, rock, microscope, mineral, atom, network];
-  const labels = ['行星 / PLANET', '岩石 / ROCK', '显微镜下 / THIN SECTION', '矿物 / MINERAL', '原子 / ATOM', '抽象点线 / DATA FIELD'];
+  const sceneKinds = [0,1,3,2,4,5];
+  const labels = ['行星 / PLANET', '岩石 / ROCK', '矿物 / MINERAL', '显微镜下 / THIN SECTION', '原子 / ATOM', '抽象点线 / DATA FIELD'];
   const frame = home.querySelector('.story-art-frame');
-  arts.forEach((art,i) => {
+  sceneKinds.forEach((kind,i) => {
+    const art = arts[kind];
     const layer = document.createElement('div');
     layer.className='story-art';
     layer.setAttribute('aria-hidden','true');
     layer.dataset.art=i;
-    const hud=hudOverlay(i);
+    const hud=hudOverlay(kind,i);
     layer.innerHTML=art.replace('</defs>',`</defs>${hud.background}`).replace('</svg>',`${hud.foreground}</svg>`);
     frame.append(layer);
   });
@@ -304,7 +306,7 @@
     refreshRockCaption(rockLayer,1);
   });
 
-  const microLayer = frame.querySelector('.story-art[data-art="2"]');
+  const microLayer = frame.querySelector('.story-art[data-art="3"]');
   const microPhotos = [...microLayer.querySelectorAll('.micro-photo')];
   const microScan = microLayer.querySelector('.micro-scan');
   let microIndex = 0;
