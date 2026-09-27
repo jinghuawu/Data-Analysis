@@ -165,7 +165,19 @@ function axisName(a){let z=axis[a],name=z.num+(z.use&&z.den?'/'+z.den:'');return
 function value(r,a){let z=axis[a],n=Number(r.data[z.num]);if(!z.num||r.data[z.num]===''||!Number.isFinite(n))return NaN;if(z.use&&z.den){let d=Number(r.data[z.den]);if(r.data[z.den]===''||!Number.isFinite(d)||d===0)return NaN;n/=d}return z.log&&n<=0?NaN:n}
 function family(g){return (g.match(/^[A-Za-z\u4e00-\u9fa5]+/)||[g])[0]}
 function hslHex(h,s,l){s/=100;l/=100;let f=n=>{let k=(n+h/30)%12,a=s*Math.min(l,1-l);return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1)))).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4)}
-function defaultStyle(g,gs){let f=family(g),arr=gs.filter(x=>family(x)===f),idx=arr.indexOf(g),t=arr.length>1?idx/(arr.length-1):.5;let families=[...new Set(gs.map(family))],fi=families.indexOf(f),h=[2,204,38,277,175,24][fi%6],l=72-30*t;return {color:hslHex(h,80,l),shape:['circle','square','triangle','diamond'][fi%4],size:5.5,opacity:1}}
+const GROUP_STYLES={
+  A:{colors:['#f07d8a','#de3f60','#9f1b45'],shape:'circle'},
+  B:{colors:['#5ec8d8','#238fc0','#215987'],shape:'square'},
+  C:{colors:['#a4d881','#58aa53','#2b734a'],shape:'triangle'},
+  D:{colors:['#c19bdf','#925cb9','#5e337f'],shape:'diamond'}
+};
+function defaultStyle(g,gs){
+  let f=family(g),preset=GROUP_STYLES[f.toUpperCase()];
+  if(preset){let suffix=g.slice(f.length),tier=/^\d+$/.test(suffix)?Math.max(0,Math.min(2,Number(suffix)-1)):1;return {color:preset.colors[tier],shape:preset.shape,size:5.5,opacity:1}}
+  let arr=gs.filter(x=>family(x)===f),idx=arr.indexOf(g),t=arr.length>1?idx/(arr.length-1):.5;
+  let families=[...new Set(gs.map(family))],fi=families.indexOf(f),h=[2,204,38,277,175,24][fi%6];
+  return {color:hslHex(h,80,72-30*t),shape:['circle','square','triangle','diamond'][fi%4],size:5.5,opacity:1}
+}
 function style(g,gs){return {...defaultStyle(g,gs),...legendOverrides.get(g)}}
 function blendWhite(hex,opacity){let a=Math.max(0,Math.min(1,opacity));return '#'+[1,3,5].map(i=>Math.round(parseInt(hex.slice(i,i+2),16)*a+255*(1-a)).toString(16).padStart(2,'0')).join('')}
 function regularPoints(sides,x,y,r,inner=0){return Array.from({length:inner?sides*2:sides},(_,i)=>{let angle=-Math.PI/2+2*Math.PI*i/(inner?sides*2:sides),radius=inner&&i%2?inner:r;return `${(x+Math.cos(angle)*radius).toFixed(2)},${(y+Math.sin(angle)*radius).toFixed(2)}`}).join(' ')}
@@ -246,4 +258,3 @@ $('#addBatch').onclick=()=>{let snapshot=sortedSnapshot();if(!snapshot.result.le
 $('#copyTsv').onclick=async()=>{let t=$('#historyTsv');if(!t.value){$('#historyStatus').textContent='请先汇总结果';return}try{await navigator.clipboard.writeText(t.value)}catch{t.select();document.execCommand('copy')}$('#historyStatus').textContent='数据已复制'};
 $('#clearHistory').onclick=()=>{history=[];$('#historyTsv').value='';$('#historyStatus').textContent='记录已清空';renderHistory()};
 $('#source').value=demo;parse();renderHistory();
-
