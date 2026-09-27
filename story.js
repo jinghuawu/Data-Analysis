@@ -77,28 +77,27 @@
       <path d="M263 229 366 345 338 459 419 590M490 190 450 313 514 421 475 581M578 250 499 339 570 521" stroke="#e7c7d7" stroke-opacity=".5" stroke-width="1.5"/>
       <path d="m301 315 32-25 17 42-25 29Zm176 119 34-24 27 30-42 30Zm-69 74 31-16 23 22-40 32Z" fill="#d6bad3" fill-opacity=".78" stroke="#fff0f8" stroke-opacity=".54"/>
       <g clip-path="url(#rockPhotoClip)">
-        <image class="photo-cycle-a" x="330" y="159" width="315" height="395" href="assets/rock-pyroxenite-detail.jpg" xlink:href="assets/rock-pyroxenite-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
-        <image class="photo-cycle-b" x="330" y="159" width="315" height="395" href="assets/rock-basalt-detail.jpg" xlink:href="assets/rock-basalt-detail.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo is-visible" x="330" y="159" width="315" height="395" href="assets/rock-01.jpg" xlink:href="assets/rock-01.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-02.jpg" xlink:href="assets/rock-02.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-03.jpg" xlink:href="assets/rock-03.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-04.jpg" xlink:href="assets/rock-04.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-05.jpg" xlink:href="assets/rock-05.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-06.jpg" xlink:href="assets/rock-06.jpg" preserveAspectRatio="xMidYMid slice"/>
+        <image class="rock-photo" x="330" y="159" width="315" height="395" href="assets/rock-07.jpg" xlink:href="assets/rock-07.jpg" preserveAspectRatio="xMidYMid slice"/>
       </g>
       <path d="M348 389 399 307 463 179 582 249 626 374 571 522 471 470 411 428Z" fill="none" stroke="#fff1f7" stroke-opacity=".9" stroke-width="2.5"/>
       <path d="m348 389 51-82 64-128m108 343-100-52-60-42" fill="none" stroke="#ffbce7" stroke-opacity=".7" stroke-width="5"/>
     </g>
     <path d="M190 430 235 286 338 214 463 179 582 249 626 374 571 522 433 594 285 563 209 501Z" stroke="#fff0f8" stroke-opacity=".72" stroke-width="2"/>
-    <g class="photo-scan photo-scan-a" fill="none">
+    <g class="photo-scan rock-scan" fill="none">
       <path d="M587 263 654 202H726" stroke="#8de8ec" stroke-width="1.5"/><circle cx="587" cy="263" r="3" fill="#b7f8f6"/>
       <text x="726" y="153" text-anchor="end" fill="#e9fcff" font-family="monospace" font-size="12" letter-spacing="2"></text>
       <text x="726" y="173" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6"></text>
       <text x="726" y="191" text-anchor="end" fill="#aee0eb" font-family="monospace" font-size="10" letter-spacing=".6"></text>
     </g>
-    <g class="photo-scan photo-scan-b" fill="none">
-      <path d="M587 263 654 202H726" stroke="#ffc1e8" stroke-width="1.5"/><circle cx="587" cy="263" r="3" fill="#ffe5f2"/>
-      <text x="726" y="153" text-anchor="end" fill="#fff0f9" font-family="monospace" font-size="12" letter-spacing="2"></text>
-      <text x="726" y="173" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6"></text>
-      <text x="726" y="191" text-anchor="end" fill="#ecc6e6" font-family="monospace" font-size="10" letter-spacing=".6"></text>
-    </g>
     <path d="m220 228-27 19 9 35 22-13Zm411 272 20 14-13 22-30-7Zm-333 96-22 13 9 27 38-9Z" fill="#c1a2ba" stroke="#f4d9e8" stroke-opacity=".6"/>
     <g stroke="#f3d5ea" stroke-opacity=".5"><path d="M103 355h55m-27-27v54M612 210h46m-23-23v46M611 577h56m-28-28v56"/></g>
-    <text x="116" y="187" fill="#cdb4cb" font-family="monospace" font-size="11" letter-spacing="4">ROCK / 01</text>
+    <text x="116" y="187" fill="#cdb4cb" font-family="monospace" font-size="11" letter-spacing="4">ROCK / 02</text>
     <text x="548" y="635" fill="#cdb4cb" font-family="monospace" font-size="11" letter-spacing="3">CORE →</text>
   `, `<clipPath id="rockClip"><path d="M190 430 235 286 338 214 463 179 582 249 626 374 571 522 433 594 285 563 209 501Z"/></clipPath><clipPath id="rockPhotoClip"><path d="M348 389 399 307 463 179 582 249 626 374 571 522 471 470 411 428Z"/></clipPath>`);
 
@@ -284,28 +283,43 @@
     frame.append(layer);
   });
 
-  // Decorative records are fictional, and each microscope caption follows its photo.
-  const rockNames = [
-      ['PYROXENITE', 'COARSE PYROXENITE', 'ULTRAMAFIC ROCK'],
-      ['BASALT', 'VESICULAR BASALT', 'MAFIC BASALT']
+  // Sample labels are illustrative; rock locations and nearby coordinates are on Earth.
+  const rockSites = [
+    ['Reykjavik, Iceland',64.1466,-21.9426],
+    ['Vancouver, Canada',49.2827,-123.1207],
+    ['Quito, Ecuador',-0.1807,-78.4678],
+    ['Santiago, Chile',-33.4489,-70.6693],
+    ['Cape Town, South Africa',-33.9249,18.4241],
+    ['Nairobi, Kenya',-1.2921,36.8219],
+    ['Kathmandu, Nepal',27.7172,85.3240],
+    ['Sapporo, Japan',43.0618,141.3545],
+    ['Perth, Australia',-31.9523,115.8613],
+    ['Auckland, New Zealand',-36.8485,174.7633]
   ];
   const fictionalPlaces = ['Aster Ridge', 'Lumen Rise', 'Nacre Shelf', 'Echo Seamount', 'Prism Bay', 'Violet Basin'];
   const fictionalRegions = ['Pacific Ocean', 'Azure Basin', 'Lunar Sea', 'North Rift', 'Crystal Gulf'];
   const pick = values => values[Math.floor(Math.random()*values.length)];
-  function refreshRockCaption(layer, photoIndex) {
-    const lat = (11 + Math.random()*19).toFixed(4);
-    const lon = (138 + Math.random()*35).toFixed(4);
-    const lines = [pick(rockNames[photoIndex]), `${pick(fictionalPlaces)}, Pacific Ocean`, `${lat}°N, ${lon}°E`];
-    const variant = photoIndex === 0 ? 'a' : 'b';
-    layer.querySelectorAll(`.photo-scan-${variant} text`).forEach((text,i) => { text.textContent = lines[i]; });
-  }
+  const coordinate = (value,positive,negative) => `${Math.abs(value).toFixed(4)}°${value < 0 ? negative : positive}`;
   const rockLayer = frame.querySelector('.story-art[data-art="1"]');
-  refreshRockCaption(rockLayer,0);
-  refreshRockCaption(rockLayer,1);
-  rockLayer.querySelector('.photo-cycle-b').addEventListener('animationiteration',() => {
-    refreshRockCaption(rockLayer,0);
-    refreshRockCaption(rockLayer,1);
-  });
+  const rockPhotos = [...rockLayer.querySelectorAll('.rock-photo')];
+  const rockScan = rockLayer.querySelector('.rock-scan');
+  let rockIndex = 0;
+  function showRockPhoto(index) {
+    rockPhotos.forEach((photo,i) => { photo.classList.toggle('is-visible',i === index); });
+    const [place,lat,lon] = pick(rockSites);
+    const latitude = lat + (Math.random()-.5)*.02;
+    const longitude = lon + (Math.random()-.5)*.02;
+    const lines = [`RK-${String(Math.floor(Math.random()*100000)).padStart(5,'0')}`,place,`${coordinate(longitude,'E','W')}, ${coordinate(latitude,'N','S')}`];
+    rockScan.querySelectorAll('text').forEach((label,i) => { label.textContent = lines[i]; });
+    rockScan.classList.remove('is-refreshing');
+    void rockScan.getBoundingClientRect();
+    rockScan.classList.add('is-refreshing');
+  }
+  showRockPhoto(rockIndex);
+  if (!reduced) window.setInterval(() => {
+    rockIndex = (rockIndex + 1) % rockPhotos.length;
+    showRockPhoto(rockIndex);
+  },5500);
 
   const microLayer = frame.querySelector('.story-art[data-art="3"]');
   const microPhotos = [...microLayer.querySelectorAll('.micro-photo')];
