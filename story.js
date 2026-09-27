@@ -271,6 +271,7 @@
   const arts = [planet, rock, microscope, mineral, atom, network];
   const sceneKinds = [0,1,3,2,4,5];
   const labels = ['行星 / PLANET', '岩石 / ROCK', '矿物 / MINERAL', '显微镜下 / THIN SECTION', '原子 / ATOM', '抽象点线 / DATA FIELD'];
+  const captions = ['ELEMENTS FROM STARS', 'ROCK FORMATION', 'MINERAL ASSEMBLAGE', 'TEXTURES', 'ATOMIC LATTICES', 'RELATIONSHIPS'];
   const frame = home.querySelector('.story-art-frame');
   sceneKinds.forEach((kind,i) => {
     const art = arts[kind];
@@ -344,6 +345,7 @@
   const backgrounds = [...home.querySelectorAll('.story-backdrop')];
   const buttons = [...home.querySelectorAll('.chapter-nav button')];
   const readout = home.querySelector('.story-readout strong');
+  const readoutCaption = home.querySelector('.story-readout small');
   const current = home.querySelector('.story-corner span');
   let scheduled=false, active=-1, burst=0;
   const clamp = (v,lo,hi) => Math.min(hi,Math.max(lo,v));
@@ -382,6 +384,7 @@
     });
     buttons.forEach((b,i) => { b.classList.toggle('active',i===nearest); if(i===nearest)b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
     readout.textContent=labels[nearest];
+    readoutCaption.textContent=captions[nearest];
     current.textContent=nearest===chapters.length-1?'06 / 06 · DATA FIELD':`${String(nearest+1).padStart(2,'0')} / 06 · SCROLL TO DESCEND`;
   }
   const queue=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update)}};
