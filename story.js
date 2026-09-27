@@ -283,33 +283,35 @@
     frame.append(layer);
   });
 
-  // Sample labels are illustrative; rock locations and nearby coordinates are on Earth.
-  const rockSites = [
-    ['Reykjavik, Iceland',64.1466,-21.9426],
-    ['Vancouver, Canada',49.2827,-123.1207],
-    ['Quito, Ecuador',-0.1807,-78.4678],
-    ['Santiago, Chile',-33.4489,-70.6693],
-    ['Cape Town, South Africa',-33.9249,18.4241],
-    ['Nairobi, Kenya',-1.2921,36.8219],
-    ['Kathmandu, Nepal',27.7172,85.3240],
-    ['Sapporo, Japan',43.0618,141.3545],
-    ['Perth, Australia',-31.9523,115.8613],
-    ['Auckland, New Zealand',-36.8485,174.7633]
+  // Illustrative sample labels: one continent per slot, with a real place and nearby coordinates.
+  // Keeping the seven slots in rotation guarantees worldwide coverage in every rock-photo cycle.
+  const earthSites = [
+    [['Reykjavik, Iceland',64.1466,-21.9426],['Oslo, Norway',59.9139,10.7522]], // Europe
+    [['Quito, Ecuador',-0.1807,-78.4678],['Santiago, Chile',-33.4489,-70.6693]], // South America
+    [['Kathmandu, Nepal',27.7172,85.3240],['Sapporo, Japan',43.0618,141.3545]], // Asia
+    [['Cairo, Egypt',30.0444,31.2357],['Nairobi, Kenya',-1.2921,36.8219]], // Africa
+    [['Vancouver, Canada',49.2827,-123.1207],['Mexico City, Mexico',19.4326,-99.1332]], // North America
+    [['Perth, Australia',-31.9523,115.8613],['Auckland, New Zealand',-36.8485,174.7633]], // Oceania
+    [['Rothera Research Station, Antarctica',-67.568889,-68.1248],['McMurdo Station, Antarctica',-77.8480,166.6683]] // Antarctica
   ];
-  const fictionalPlaces = ['Aster Ridge', 'Lumen Rise', 'Nacre Shelf', 'Echo Seamount', 'Prism Bay', 'Violet Basin'];
-  const fictionalRegions = ['Pacific Ocean', 'Azure Basin', 'Lunar Sea', 'North Rift', 'Crystal Gulf'];
   const pick = values => values[Math.floor(Math.random()*values.length)];
   const coordinate = (value,positive,negative) => `${Math.abs(value).toFixed(4)}°${value < 0 ? negative : positive}`;
+  const sampleLocation = slot => {
+    const [place,lat,lon] = pick(earthSites[slot % earthSites.length]);
+    // Keep the generated coordinate close to the named place, including the Antarctic station.
+    const spread = Math.abs(lat) > 65 ? .0005 : .01;
+    const latitude = lat + (Math.random()-.5)*2*spread;
+    const longitude = lon + (Math.random()-.5)*2*spread;
+    return [place, `${coordinate(longitude,'E','W')}, ${coordinate(latitude,'N','S')}`];
+  };
   const rockLayer = frame.querySelector('.story-art[data-art="1"]');
   const rockPhotos = [...rockLayer.querySelectorAll('.rock-photo')];
   const rockScan = rockLayer.querySelector('.rock-scan');
   let rockIndex = 0;
   function showRockPhoto(index) {
     rockPhotos.forEach((photo,i) => { photo.classList.toggle('is-visible',i === index); });
-    const [place,lat,lon] = pick(rockSites);
-    const latitude = lat + (Math.random()-.5)*.02;
-    const longitude = lon + (Math.random()-.5)*.02;
-    const lines = [`RK-${String(Math.floor(Math.random()*100000)).padStart(5,'0')}`,place,`${coordinate(longitude,'E','W')}, ${coordinate(latitude,'N','S')}`];
+    const [place,location] = sampleLocation(index);
+    const lines = [`RK-${String(Math.floor(Math.random()*100000)).padStart(5,'0')}`,place,location];
     rockScan.querySelectorAll('text').forEach((label,i) => { label.textContent = lines[i]; });
     rockScan.classList.remove('is-refreshing');
     void rockScan.getBoundingClientRect();
@@ -327,9 +329,8 @@
   let microIndex = 0;
   function showMicroPhoto(index) {
     microPhotos.forEach((photo,i) => { photo.classList.toggle('is-visible',i === index); });
-    const longitude = `${(10 + Math.random()*165).toFixed(4)}°${Math.random() < .5 ? 'E' : 'W'}`;
-    const latitude = `${(4 + Math.random()*74).toFixed(4)}°${Math.random() < .5 ? 'N' : 'S'}`;
-    const lines = [`#${microNumbers[index]}`, `${pick(fictionalPlaces)}, ${pick(fictionalRegions)}`, `${longitude}, ${latitude}`];
+    const [place,location] = sampleLocation(index);
+    const lines = [`#${microNumbers[index]}`, place, location];
     microScan.querySelectorAll('text').forEach((label,i) => { label.textContent = lines[i]; });
     microScan.classList.remove('is-refreshing');
     void microScan.getBoundingClientRect();
