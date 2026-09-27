@@ -1,0 +1,50 @@
+/* The third workbench uses the same violet field and frosted panels as 01/02. */
+.mineral-work{max-width:1600px}
+.mineral-head-tag{border:1px solid #eadcf080;border-radius:4px;padding:11px 15px;color:#f3e8f8;font:600 .7rem/1.4 monospace;letter-spacing:.14em;white-space:nowrap}
+.mineral-tabs{display:flex;gap:8px;margin:0 0 17px;border-bottom:1px solid #eee1fa66}
+.mineral-tabs button{border:0;border-bottom:2px solid transparent;background:transparent;color:#e2d6ecb5;padding:12px 19px;font-size:.86rem;letter-spacing:.045em}
+.mineral-tabs button:hover,.mineral-tabs button.active{color:#fff;border-bottom-color:#f2d5f6}
+.mineral-tab-pane:not(.active){display:none}
+.mineral-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.8fr);gap:17px}
+.mineral-settings{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,1fr);gap:17px;margin-top:17px}
+.mineral-panel{padding:23px;min-width:0}
+.mineral-edit-wrap{max-height:430px}
+.mineral-edit-table{min-width:100%;white-space:nowrap}
+.mineral-edit-table th,.mineral-edit-table td{padding:7px 5px}
+.mineral-edit-table th:first-child,.mineral-edit-table td:first-child{padding-left:12px}
+.mineral-edit-table input[type=text],.mineral-edit-table input[type=number],.mineral-edit-table select{background:#fff;color:#202936;border:1px solid #c5d3dc;border-radius:4px;min-height:35px;padding:6px 8px;box-shadow:inset 0 1px #fff}
+.mineral-edit-table input[type=number]{width:78px}
+.mineral-edit-table input[type=text]{width:126px}
+.mineral-edit-table select{min-width:116px}
+.mineral-edit-table input[type=radio]{accent-color:#6e528f}
+.mineral-edit-table tr:has(input[type=radio]:checked){background:#e6e1f1}
+.mineral-panel .notice{color:#596c79;line-height:1.55}
+.mineral-panel>.notice{margin-top:14px}
+.mineral-fields{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:15px}
+.mineral-check{margin:5px 0 0}
+.mineral-corr-fields.is-disabled{opacity:.52}
+.mineral-run-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mineral-run-fields .field input{font-variant-numeric:tabular-nums}
+.mineral-run-actions{margin-top:19px}
+.mineral-run-actions button:disabled,.mineral-results button:disabled,.mineral-axis-panel button:disabled{opacity:.48;cursor:not-allowed;transform:none}
+.mineral-progress{margin-top:17px;display:flex;align-items:center;gap:12px;color:#52616c;font:600 .78rem monospace}
+.mineral-progress[hidden]{display:none}
+.mineral-progress progress{flex:1;max-width:390px;height:10px;accent-color:#695789}
+.mineral-results{margin-top:17px}
+.mineral-status{min-height:59px;border-left:3px solid #a99bbd;padding:9px 14px;background:#f4f2f8;color:#33404d;line-height:1.6;white-space:pre-line;font-size:.88rem}
+.mineral-status.error{border-color:#b87479;background:#fff0f1}
+.mineral-status.success{border-color:#739d91;background:#edf7f3}
+.mineral-result-wrap{max-height:380px;margin-top:16px}
+.mineral-result-wrap:empty{display:none}
+.mineral-result-wrap table:empty{display:none}
+.mineral-preview-layout{display:grid;grid-template-columns:minmax(240px,300px) minmax(0,1fr);gap:17px}
+.mineral-axis-panel{display:flex;flex-direction:column;gap:16px;align-self:start}
+.mineral-axis-panel .panel-title{margin-bottom:2px}
+.mineral-axis-panel .field select{width:100%}
+.mineral-axis-panel .control-btn{align-self:start}
+.mineral-chart-panel{min-height:520px}
+.mineral-chart{min-height:440px;display:flex;align-items:center;justify-content:center}
+.mineral-chart svg{height:auto;max-height:580px;min-height:320px}
+.mineral-chart-empty{color:#6c7a86;font-size:.9rem}
+@media(max-width:1050px){.mineral-layout,.mineral-settings,.mineral-preview-layout{grid-template-columns:1fr}.mineral-chart-panel{min-height:0}}
+@media(max-width:650px){.mineral-head-tag{white-space:normal}.mineral-panel{padding:15px}.mineral-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.mineral-corr-fields .field:last-child{grid-column:span 2}.mineral-tabs button{flex:1;padding:12px 7px;font-size:.78rem}.mineral-chart{min-height:320px}.mineral-chart svg{min-height:300px}.top .nav{flex-wrap:wrap;justify-content:flex-start;column-gap:14px;row-gap:0}.top .nav button{white-space:nowrap}}

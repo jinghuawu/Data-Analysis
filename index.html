@@ -12,7 +12,7 @@
 
 
 .chip-list{max-height:220px;overflow:auto;align-content:start}.chip{display:inline-flex;align-items:center;gap:5px;cursor:grab;user-select:none;touch-action:none}.chip:active{cursor:grabbing}.chip.absent{opacity:.58}.chip.dragging{opacity:.35}.chip.drag-target{outline:2px solid #7459ac;outline-offset:2px}.chip .grip{font-size:1rem;line-height:1;color:#607987}.history-panel{margin-top:17px;padding:23px}.history-table-wrap{max-height:320px}.tsv-output{height:140px;margin-top:14px;font-size:.75rem}.check-label{display:flex;gap:8px;align-items:center;color:#263542;font-size:.8rem}.check-label input{margin:0}.sort-right .table-wrap{max-height:600px}.data-table td[contenteditable="true"]{background:#f4faff;cursor:text}.data-table td[contenteditable="true"]:focus{outline:2px solid #7aa8c9;outline-offset:-2px}.data-table td.missing{color:#8b9aa5}.history-panel .control-btn{background:#e9f0f5;color:#21313d;border-color:#aabdc8}
-</style><link rel="stylesheet" href="story.css?v=1caa98ee"></head><body><div class="shell"><header class="top"><button class="brand" data-view="home">数据分析<span> / Data Analysis</span></button><nav class="nav" aria-label="主导航"><button class="active" data-view="home">欢迎</button><button data-view="sort">01 / 数据导入</button><button data-view="plot">02 / 投图分析</button></nav></header><main><section id="home" class="view home active" aria-label="欢迎 · 从行星到数据">
+</style><link rel="stylesheet" href="story.css?v=1caa98ee"><link rel="stylesheet" href="mineral.css?v=1"></head><body><div class="shell"><header class="top"><button class="brand" data-view="home">数据分析<span> / Data Analysis</span></button><nav class="nav" aria-label="主导航"><button class="active" data-view="home">欢迎</button><button data-view="sort">01 / 数据导入</button><button data-view="plot">02 / 投图分析</button><button data-view="mineralEstimate">03 / 矿物估测</button></nav></header><main><section id="home" class="view home active" aria-label="欢迎 · 从行星到数据">
   <div class="home-story">
     <div class="home-visual" aria-hidden="false">
       <div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div><div class="story-backdrop"></div>
@@ -90,4 +90,76 @@
     <label>图例透明度 <span class="legend-dual"><input id="legendTransparency" type="range" min="0" max="100" step="1" value="0"><input id="legendTransparencyNumber" type="number" min="0" max="100" step="0.1" value="0" aria-label="图例透明度百分比"><span>%</span></span></label>
   </div>
   <div class="legend-dialog-actions"><button id="legendReset" type="button" class="control-btn">恢复默认</button><button id="legendCancel" type="button" class="control-btn">取消</button><button id="legendApply" type="button" class="primary">应用</button></div>
-</dialog></div><div class="panel stats"><div class="panel-title">相关性分析 <label class="field method-field"><select aria-label="相关方法" id="method"><option value="pearson">Pearson</option><option value="spearman">Spearman</option></select></label></div><div id="stats" class="stat-grid"></div></div></div></div></section></main></div><script defer src="app.js?v=503deca5"></script><script defer src="story.js?v=9c4d09e5"></script></body></html>
+</dialog></div><div class="panel stats"><div class="panel-title">相关性分析 <label class="field method-field"><select aria-label="相关方法" id="method"><option value="pearson">Pearson</option><option value="spearman">Spearman</option></select></label></div><div id="stats" class="stat-grid"></div></div></div></div></section><section id="mineralEstimate" class="view work mineral-work" aria-labelledby="mineralTitle">
+  <div class="work-head">
+    <div><div class="eyebrow">03 / MINERAL ESTIMATION</div><h1 id="mineralTitle">矿物估测</h1><p>用矿物成分与全岩约束，筛选蒙特卡洛组合。</p></div>
+    <span class="mineral-head-tag">MONTE CARLO / SEED REPRODUCIBLE</span>
+  </div>
+  <div class="mineral-tabs" role="tablist" aria-label="矿物估测页面">
+    <button type="button" id="mineralConfigTab" class="active" role="tab" aria-selected="true" aria-controls="mineralConfig">01　配置与模拟</button>
+    <button type="button" id="mineralPreviewTab" role="tab" aria-selected="false" aria-controls="mineralPreview">02　投图预览</button>
+  </div>
+  <div id="mineralConfig" class="mineral-tab-pane active" role="tabpanel" aria-labelledby="mineralConfigTab">
+    <div class="mineral-layout">
+      <div class="panel mineral-panel">
+        <div class="panel-title">矿物化学成分 <small>wt% · 单元格可直接编辑</small></div>
+        <div class="table-wrap mineral-edit-wrap"><table class="data-table mineral-edit-table" id="mineralTable" aria-label="矿物化学成分"></table></div>
+        <div class="toolbar"><button type="button" class="control-btn" id="mineralAdd">＋ 添加矿物</button><button type="button" class="control-btn" id="mineralDelete">删除选中矿物</button></div>
+        <p class="notice">每行填写一种矿物。计算采用 SiO2、Al2O3、FeO、TiO2、Na2O、K2O 六项；MgO 与 CaO 保留在编辑表中，与原模型一致。</p>
+      </div>
+      <div class="panel mineral-panel">
+        <div class="panel-title">全岩框约束 <small>wt% · 含边界值</small></div>
+        <div class="table-wrap mineral-edit-wrap"><table class="data-table mineral-edit-table" id="constraintTable" aria-label="全岩框约束"></table></div>
+        <div class="toolbar"><button type="button" class="control-btn" id="constraintAdd">＋ 添加条件</button><button type="button" class="control-btn" id="constraintDelete">删除选中条件</button></div>
+        <p class="notice">可为同一氧化物设置多条约束；它们将同时生效。</p>
+      </div>
+    </div>
+    <div class="mineral-settings">
+      <div class="panel mineral-panel">
+        <div class="panel-title">元素相关性趋势 <small>可选筛选</small></div>
+        <label class="check-label mineral-check"><input type="checkbox" id="mineralUseCorr"> 启用趋势筛选</label>
+        <div class="mineral-fields mineral-corr-fields" id="mineralCorrFields">
+          <label class="field">自变量 X<select id="mineralCorrX"></select></label>
+          <label class="field">因变量 Y<select id="mineralCorrY"></select></label>
+          <label class="field">目标斜率<input id="mineralSlope" type="number" step="any" value="0.2"></label>
+          <label class="field">截距<input id="mineralIntercept" type="number" step="any" value="-10"></label>
+          <label class="field">容差 ±<input id="mineralTolerance" type="number" min="0" step="any" value="0.5"></label>
+        </div>
+        <p class="notice">满足 |Y − (斜率 × X ＋ 截距)| ≤ 容差的组合才会保留。</p>
+      </div>
+      <div class="panel mineral-panel mineral-run-panel">
+        <div class="panel-title">运行设置 <small>相同参数与种子得到相同结果</small></div>
+        <div class="mineral-fields mineral-run-fields">
+          <label class="field">模拟次数<input id="mineralIterations" type="number" min="1000" max="10000000" step="1000" value="50000"></label>
+          <label class="field">随机种子<input id="mineralSeed" type="number" min="0" max="4294967295" step="1" value="123"></label>
+        </div>
+        <p class="notice">支持 1,000–10,000,000 次。高命中率与大规模结果会占用较多浏览器内存。</p>
+        <div class="toolbar mineral-run-actions"><button type="button" class="primary" id="mineralRun">运行模拟 ↗</button><button type="button" class="control-btn" id="mineralCancel" disabled>取消</button></div>
+        <div class="mineral-progress" id="mineralProgressWrap" hidden><progress id="mineralProgress" max="100" value="0"></progress><span id="mineralProgressText">准备中…</span></div>
+      </div>
+    </div>
+    <div class="panel mineral-panel mineral-results">
+      <div class="panel-title">统计结果 <small id="mineralResultHint">等待运行</small></div>
+      <div id="mineralStatus" class="mineral-status" role="status" aria-live="polite">修改参数后运行模拟，结果会显示在这里。</div>
+      <div class="toolbar"><button type="button" class="control-btn" id="mineralDownload" disabled>下载完整结果 CSV</button><button type="button" class="control-btn" id="mineralToPreview" disabled>查看投图预览 ↗</button></div>
+      <div class="table-wrap mineral-result-wrap"><table class="data-table" id="mineralResultTable" aria-label="前 80 条有效结果预览"></table></div>
+      <p class="notice" id="mineralTableNote"></p>
+    </div>
+  </div>
+  <div id="mineralPreview" class="mineral-tab-pane" role="tabpanel" aria-labelledby="mineralPreviewTab" hidden>
+    <div class="mineral-preview-layout">
+      <div class="panel mineral-panel mineral-axis-panel">
+        <div class="panel-title">坐标设置</div>
+        <label class="field">X 轴数据<select id="mineralXSelect" disabled></select></label>
+        <label class="field">Y 轴数据<select id="mineralYSelect" disabled></select></label>
+        <button type="button" class="control-btn" id="mineralRefresh" disabled>刷新图表</button>
+        <p class="notice" id="mineralPlotNote">请先在配置页运行模拟。</p>
+      </div>
+      <div class="panel mineral-panel mineral-chart-panel">
+        <div class="panel-title">组合分布 <small id="mineralPlotTitle"></small></div>
+        <div class="chart-wrap mineral-chart" id="mineralChart"><div class="mineral-chart-empty">运行后在这里查看散点图</div></div>
+      </div>
+    </div>
+  </div>
+</section></main></div><script defer src="app.js?v=503deca5"></script><script defer src="story.js?v=9c4d09e5"></script><script defer src="mineral.js?v=1"></script></body></html>
+
