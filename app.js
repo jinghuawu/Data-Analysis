@@ -5,6 +5,8 @@ function canonical(name){let raw=String(name??'').trim(),lower=raw.toLowerCase()
 let rows=[],cols=[],original=[],order=DEFAULT_ORDER.slice(),excludedElements=new Set(),sampleCol='',groupCol='',history=[];
 let axis={x:{num:'',den:'',use:false,min:'',max:'',step:'',log:false,unitEnabled:false,unit:'%'},y:{num:'',den:'',use:false,min:'',max:'',step:'',log:false,unitEnabled:false,unit:'%'}};
 let legendOverrides=new Map(),legendGroups=[],corelSvg='';
+function frequencyDefaults(){return {enabled:false,curve:'kde',scale:'count',histogram:true,showCurve:true,binWidth:'',binStart:'',bandwidth:'',min:'',max:'',step:'',divisions:4,grid:true,size:125,fontSize:12,lineWidth:2,histOpacity:.22}}
+let frequency={x:frequencyDefaults(),y:frequencyDefaults()},editingFrequency='x',lastPlotLimits={};
 const demo=`Sample ID	Group	SiO2	TiO2	Al2O3	Fe2O3T	MnO	MgO	CaO	Na2O	K2O	P2O5	LOI	Total	La	Ce	Pr	Nd	Sm	Eu	Gd	Tb	Dy	Ho	Er	Tm	Yb	Lu	Y	Li	Be	Rb	Sr	Cs	Ba	Zr	Hf	Nb	Ta	Ga	Th	U	Pb	Sc	V	Cr	Co	Ni	Cu	Zn	W	Sn	Mo
 12FJ038	A1	75.58	0.27	13.15	1.47	0.05	0.39	1.23	3.14	4.65	0.06	0.77	99.99	65.10	111.00	10.40	33.70	5.38	0.95	4.17	0.61	3.37	0.68	2.03	0.35	2.43	0.39	22.4		5.66	236	183	3.96	497	150	4.73	23.6	2.04	16.6	43.8	6.92	35.7	5.06	13	0.81	1.25	0.67	6.76	27.3			
 12FJ040	A1	72.14	0.36	13.17	1.94	0.06	0.45	1.26	4.88	5.68	0.07	0.77	100.01	62.50	123.00	13.50	49.90	11.10	1.23	9.92	1.70	10.50	2.09	6.07	0.99	6.21	0.84	65.3		4.01	261	170	2.22	453	213	6.32	32.9	2.67	17.1	42.2	6.61	37.3	5.69	15	0.89	2.13	0.59	1.01	35.5			
@@ -158,7 +160,9 @@ function renderTables(){let selected=rows.filter(r=>r.selected).length,all=rows.
 $('#selectAll').onclick=()=>{rows.forEach(r=>r.selected=true);renderTables();renderPlot()};$('#selectNone').onclick=()=>{rows.forEach(r=>r.selected=false);renderTables();renderPlot()};$('#groupPlot').onchange=renderPlot;
 function renderAxis(){
   let avail=cols.filter(c=>c!==sampleCol&&c!==groupCol);
-  $('#axisControls').innerHTML=['x','y'].map(a=>`<div class="axis-card"><h3>${a.toUpperCase()} 轴 / ${a==='x'?'横轴':'纵轴'}</h3><div class="axis-row"><label>分子</label><select class="field" data-axis="${a}" data-key="num">${avail.map(c=>`<option value="${esc(c)}" ${axis[a].num===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="axis-row"><label>分母</label><div class="denom"><input type="checkbox" aria-label="启用 ${a.toUpperCase()} 轴分母" data-axis="${a}" data-key="use" ${axis[a].use?'checked':''}><select class="field" aria-label="${a.toUpperCase()} 轴分母" data-axis="${a}" data-key="den" ${axis[a].use?'':'disabled'}><option value=""></option>${avail.map(c=>`<option value="${esc(c)}" ${axis[a].den===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div></div><div class="axis-range">${['min','max','step'].map((k,i)=>`<label class="field">${['起始','结束','间隔'][i]}<input type="number" step="any" data-axis="${a}" data-key="${k}" value="${esc(axis[a][k])}" placeholder="自动"></label>`).join('')}</div><div class="axis-options"><label><input type="checkbox" data-axis="${a}" data-key="unitEnabled" ${axis[a].unitEnabled?'checked':''}> 单位</label><input type="text" aria-label="${a.toUpperCase()} 轴单位" data-axis="${a}" data-key="unit" value="${esc(axis[a].unit)}" placeholder="例如 ppm"><label class="axis-log"><input type="checkbox" data-axis="${a}" data-key="log" ${axis[a].log?'checked':''}> LOG10 数轴</label></div></div>`).join('');
+  $('#axisControls').innerHTML=['x','y'].map(a=>`<div class="axis-card"><h3>${a.toUpperCase()} 轴 / ${a==='x'?'横轴':'纵轴'}</h3><div class="axis-row"><label>分子</label><select class="field" data-axis="${a}" data-key="num">${avail.map(c=>`<option value="${esc(c)}" ${axis[a].num===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="axis-row"><label>分母</label><div class="denom"><input type="checkbox" aria-label="启用 ${a.toUpperCase()} 轴分母" data-axis="${a}" data-key="use" ${axis[a].use?'checked':''}><select class="field" aria-label="${a.toUpperCase()} 轴分母" data-axis="${a}" data-key="den" ${axis[a].use?'':'disabled'}><option value=""></option>${avail.map(c=>`<option value="${esc(c)}" ${axis[a].den===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div></div><div class="axis-range">${['min','max','step'].map((k,i)=>`<label class="field">${['起始','结束','间隔'][i]}<input type="number" step="any" data-axis="${a}" data-key="${k}" value="${esc(axis[a][k])}" placeholder="自动"></label>`).join('')}</div><div class="axis-options"><label><input type="checkbox" data-axis="${a}" data-key="unitEnabled" ${axis[a].unitEnabled?'checked':''}> 单位</label><input type="text" aria-label="${a.toUpperCase()} 轴单位" data-axis="${a}" data-key="unit" value="${esc(axis[a].unit)}" placeholder="例如 ppm"><label class="axis-log"><input type="checkbox" data-axis="${a}" data-key="log" ${axis[a].log?'checked':''}> LOG10 数轴</label></div><div class="frequency-toggle"><label><input type="checkbox" data-frequency="${a}" ${frequency[a].enabled?'checked':''}> 频率统计</label><button type="button" class="frequency-settings" data-frequency-settings="${a}">设置…</button></div></div>`).join('');
+  document.querySelectorAll('[data-frequency]').forEach(el=>el.onchange=()=>{frequency[el.dataset.frequency].enabled=el.checked;renderPlot()});
+  document.querySelectorAll('[data-frequency-settings]').forEach(el=>el.onclick=()=>openFrequency(el.dataset.frequencySettings));
   document.querySelectorAll('[data-axis]').forEach(el=>{let update=e=>{let a=e.target.dataset.axis,k=e.target.dataset.key;axis[a][k]=e.target.type==='checkbox'?e.target.checked:e.target.value;if(k==='use')renderAxis();renderPlot()};el.addEventListener('change',update);if(el.dataset.key==='unit')el.addEventListener('input',update)});
 }
 function axisName(a){let z=axis[a],name=z.num+(z.use&&z.den?'/'+z.den:'');return name+(z.unitEnabled&&z.unit.trim()?` (${z.unit.trim()})`:'')}
@@ -197,16 +201,111 @@ function markerMarkup(st,x,y,title='',flat=false){
   else points=regularPoints(4,x,y,size*1.35);
   return hint?`<polygon points="${points}" ${attrs}>${hint}</polygon>`:`<polygon points="${points}" ${attrs}/>`;
 }
-function tick(v){return Math.abs(v)>=1000?v.toExponential(1):Number(v.toPrecision(3)).toString()}function renderPlot(){if(!rows.length){corelSvg='';$('#legend').innerHTML='';$('#chart').innerHTML='<div class="notice" style="padding:40px">请先在“数据导入”中粘贴数据。</div>';$('#stats').innerHTML='';return}let data=rows.filter(r=>r.selected).map(r=>({r,x:value(r,'x'),y:value(r,'y'),g:plotGroup(r)})),valid=data.filter(d=>Number.isFinite(d.x)&&Number.isFinite(d.y));let bad=data.length-valid.length,gs=[...new Set(valid.map(d=>d.g))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));$('#plotNotice').textContent=`已选择 ${data.length} 个样品 · 有效投图 ${valid.length} 个 · 缺失、零分母或对数轴非正值排除 ${bad} 个。`;$('#chartTitle').textContent=`${axisName('x')} vs ${axisName('y')}`;const W=750,H=540,L=140,R=70,T=33,B=102,pw=W-L-R,ph=H-T-B;let vals=a=>valid.map(d=>a==='x'?d.x:d.y),limits={};for(let a of ['x','y']){let z=axis[a],v=vals(a),mn=Math.min(...v),mx=Math.max(...v);if(!v.length){mn=z.log?.1:0;mx=z.log?10:1}let low=z.min!==''?+z.min:(z.log?10**Math.floor(Math.log10(mn)):mn-(mx-mn||1)*.08),high=z.max!==''?+z.max:(z.log?10**Math.ceil(Math.log10(mx)):mx+(mx-mn||1)*.08);if(z.log&&low<=0)low=mn>0?mn/2:.1;if(!(high>low))high=low+(z.log?low*10:1);limits[a]={low,high,lo:z.log?Math.log10(low):low,hi:z.log?Math.log10(high):high}}let pos=(v,a)=>{let z=axis[a],b=limits[a],u=z.log?Math.log10(v):v;return a==='x'?L+(u-b.lo)/(b.hi-b.lo)*pw:T+ph-(u-b.lo)/(b.hi-b.lo)*ph};let ticks=a=>{let z=axis[a],b=limits[a],s=Number(z.step),ar=[];if(z.log){let begin=Math.ceil(Math.log10(b.low)),end=Math.floor(Math.log10(b.high));for(let k=begin;k<=end&&ar.length<30;k++)ar.push(10**k)}else if(s>0){for(let t=Math.ceil(b.low/s)*s;t<=b.high&&ar.length<35;t+=s)ar.push(t)}else for(let i=0;i<=5;i++)ar.push(b.low+(b.high-b.low)*i/5);return ar};let grid=ticks('x').map(v=>`<line x1="${pos(v,'x')}" y1="${T}" x2="${pos(v,'x')}" y2="${T+ph}" stroke="#c9cfd3"/><text x="${pos(v,'x')}" y="${T+ph+37}" text-anchor="middle" fill="#222b33" font-size="16">${tick(v)}</text>`).join('')+ticks('y').map(v=>`<line x1="${L}" y1="${pos(v,'y')}" x2="${L+pw}" y2="${pos(v,'y')}" stroke="#c9cfd3"/><text x="${L-18}" y="${pos(v,'y')+5}" text-anchor="end" fill="#222b33" font-size="16">${tick(v)}</text>`).join('');let marks=valid.filter(d=>d.x>=limits.x.low&&d.x<=limits.x.high&&d.y>=limits.y.low&&d.y<=limits.y.high).map(d=>{
+function renderFrequencyPlots(data,gs,limits,pos,box){
+  const {L,T,pw,ph}=box;
+  let svg='';
+  for(const a of ['x','y']){
+    const s=frequency[a];if(!s.enabled)continue;
+    const horizontal=a==='x',x=horizontal?L:L+pw+36,y=horizontal?38:T,w=horizontal?pw:s.size,h=horizontal?s.size:ph;
+    const title=`${a.toUpperCase()} · ${s.curve==='normal'?'正态':'KDE'} · ${s.scale==='relative'?'相对频率':'频数'}`;
+    let content='',message='';
+    try {
+      const bins=FrequencyStats.binLayout(data.map(d=>d[a]),limits[a].low,limits[a].high,s);
+      const models=gs.map(g=>({g,model:FrequencyStats.distribution(data.filter(d=>d.g===g).map(d=>d[a]),bins,s,axis[a].log)}));
+      let peak=0;
+      for(const {model} of models){if(s.histogram)for(const b of model.histogram)peak=Math.max(peak,b.height);if(s.showCurve)for(const p of model.curve)peak=Math.max(peak,p.height)}
+      const low=s.min===''?0:Number(s.min);
+      const target=Math.max((peak||1)*1.12,low+Math.max(Math.abs(low)*.1,(peak||1)*.1));
+      const rawStep=(target-low)/s.divisions,mag=10**Math.floor(Math.log10(rawStep));
+      const niceStep=([1,2,2.5,5,10].find(n=>n*mag>=rawStep)||10)*mag;
+      const high=s.max===''?niceStep*Math.ceil(target/niceStep):Number(s.max);
+      if(!(high>low))throw new Error('频率轴结束值必须大于起始值。');
+      const fp=v=>horizontal?y+h-(v-low)/(high-low)*h:x+(v-low)/(high-low)*w;
+      const ft=[];
+      if(Number(s.step)>0){const step=Number(s.step),start=Math.ceil(low/step)*step;for(let i=0;i<80&&start+i*step<=high;i++)ft.push(start+i*step)}
+      else for(let i=0;i<=s.divisions;i++)ft.push(low+(high-low)*i/s.divisions);
+      const fmt=v=>s.scale==='relative'?`${tick(v*100)}%`:tick(v);
+      content+=ft.map(v=>horizontal?`${s.grid?`<line x1="${x}" y1="${fp(v)}" x2="${x+w}" y2="${fp(v)}" stroke="#dbe2e8"/>`:''}<line x1="${x-4}" y1="${fp(v)}" x2="${x}" y2="${fp(v)}" stroke="#333"/><text x="${x-9}" y="${fp(v)+s.fontSize*.33}" text-anchor="end">${fmt(v)}</text>`:`${s.grid?`<line x1="${fp(v)}" y1="${y}" x2="${fp(v)}" y2="${y+h}" stroke="#dbe2e8"/>`:''}<line x1="${fp(v)}" y1="${y+h}" x2="${fp(v)}" y2="${y+h+4}" stroke="#333"/><text x="${fp(v)}" y="${y+h+s.fontSize+7}" text-anchor="middle">${fmt(v)}</text>`).join('');
+      content+=`<defs><clipPath id="frequency-clip-${a}"><rect x="${x}" y="${y}" width="${w}" height="${h}"/></clipPath></defs><g clip-path="url(#frequency-clip-${a})">`;
+      for(const {g,model} of models){
+        const st=style(g,gs),hint=`${g} · n=${model.n} · 点击设置 ${a.toUpperCase()} 轴频率统计`;
+        if(s.showCurve&&model.warning)message='部分分组无法拟合正态曲线；可点击改用 KDE。';
+        const attrs=`data-frequency-group="${esc(g)}"`;
+        if(s.histogram)content+=model.histogram.filter(b=>b.count).map(b=>{
+          const lo=pos(Math.max(b.low,limits[a].low),a),hi=pos(Math.min(b.high,limits[a].high),a),height=Math.abs(fp(b.height)-fp(0));
+          if(b.high<=limits[a].low||b.low>=limits[a].high)return '';
+          const rect=horizontal?`x="${lo}" y="${Math.min(fp(0),fp(b.height))}" width="${Math.max(0,hi-lo)}" height="${height}"`:`x="${Math.min(fp(0),fp(b.height))}" y="${hi}" width="${height}" height="${Math.max(0,lo-hi)}"`;
+          return `<rect ${rect} ${attrs} fill="${st.color}" fill-opacity="${s.histOpacity}" stroke="${st.color}" stroke-width=".7"><title>${esc(hint)} · [${tick(b.low)}, ${tick(b.high)}] · ${b.count} 个</title></rect>`;
+        }).join('');
+      }
+      // Draw all curves after the bars, keeping every group's line clickable.
+      if(s.showCurve)for(const {g,model} of models){
+        if(!model.curve.length)continue;
+        const color=style(g,gs).color,path=model.curve.map((p,i)=>`${i?'L':'M'}${horizontal?pos(p.x,a):fp(p.height)},${horizontal?fp(p.height):pos(p.x,a)}`).join(' ');
+        const attrs=`data-frequency-group="${esc(g)}"`;
+        content+=`<path d="${path}" ${attrs} fill="none" stroke="${color}" stroke-width="${s.lineWidth}" pointer-events="none"/><path d="${path}" ${attrs} fill="none" stroke="transparent" stroke-width="12" pointer-events="stroke"><title>${esc(g)} · n=${model.n} · ${esc(title)} · 点击设置</title></path>`;
+      }
+      content+='</g>';
+      const info=`步长 ${tick(bins.width)}${axis[a].log?' · 原始值统计 / LOG10 显示':''}`;
+      content+=horizontal?`<text x="${x}" y="${y+h+19}" fill="#65717d" font-size="11">${esc(info)}</text>`:`<text x="${x+w/2}" y="${y+h+43}" text-anchor="middle" fill="#65717d" font-size="10">步长 ${tick(bins.width)}</text>`;
+      if(!data.length)message='暂无有效投图样品';
+    } catch(error){message=error.message}
+    const heading=horizontal?`<text x="${x}" y="${y-14}" font-size="13" font-weight="600">${esc(title)} · 点击设置</text>`:`<text x="${x+w/2}" y="${y-14}" text-anchor="middle" font-size="12" font-weight="600">${esc(title)}</text>`;
+    const note=message?`<text x="${horizontal?x:x+w/2}" y="${horizontal?y+h+36:y+h+60}" text-anchor="${horizontal?'start':'middle'}" font-size="10" fill="#904825">${esc(message)}</text>`:'';
+    svg+=`<g class="frequency-panel" data-frequency-open="${a}" role="button" tabindex="0" aria-label="设置 ${a.toUpperCase()} 轴频率统计" font-family="Arial, Microsoft YaHei, sans-serif" font-size="${s.fontSize}" fill="#27333e" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff"/>${heading}${content}<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#384450" pointer-events="none"/>${note}</g>`;
+  }
+  return svg;
+}
+function openFrequency(a,g=''){
+  editingFrequency=a;
+  const s=frequency[a],dialog=$('#frequencyDialog');
+  $('#frequencyDialogTitle').textContent=`${a.toUpperCase()} 轴 · 频率统计设置`;
+  $('#frequencyContext').textContent=`${g?g+' · ':''}以下设置应用于本轴所有分组；颜色与散点图例同步。`;
+  for(const el of dialog.querySelectorAll('[data-frequency-key]')){const v=s[el.dataset.frequencyKey];if(el.type==='checkbox')el.checked=v;else el.value=v}
+  for(const el of dialog.querySelectorAll('[data-frequency-axis-key]'))el.value=axis[a][el.dataset.frequencyAxisKey];
+  $('#frequencyError').textContent='';
+  dialog.showModal();
+}
+function initFrequencyDialog(){
+  const dialog=$('#frequencyDialog');
+  $('#frequencyClose').onclick=$('#frequencyCancel').onclick=()=>dialog.close();
+  $('#frequencyReset').onclick=()=>{const old=frequency[editingFrequency];frequency[editingFrequency]=frequencyDefaults();openFrequencyFields();frequency[editingFrequency]=old};
+  function openFrequencyFields(){for(const el of dialog.querySelectorAll('[data-frequency-key]')){const v=frequency[editingFrequency][el.dataset.frequencyKey];if(el.type==='checkbox')el.checked=v;else el.value=v}$('#frequencyError').textContent=''}
+  $('#frequencyForm').onsubmit=e=>{
+    e.preventDefault();
+    const a=editingFrequency,next={...frequency[a]},nextAxis={...axis[a]};
+    for(const el of dialog.querySelectorAll('[data-frequency-key]'))next[el.dataset.frequencyKey]=el.type==='checkbox'?el.checked:el.type==='number'&&el.value!==''?Number(el.value):el.value;
+    for(const el of dialog.querySelectorAll('[data-frequency-axis-key]'))nextAxis[el.dataset.frequencyAxisKey]=el.value;
+    try {
+      if(!next.histogram&&!next.showCurve)throw new Error('请至少显示曲线或直方图。');
+      for(const k of ['binWidth','bandwidth','step'])if(next[k]!==''&&(!Number.isFinite(next[k])||next[k]<=0))throw new Error('步长、带宽和刻度间隔必须为正数。');
+      if(next.min!==''&&next.min<0)throw new Error('频率轴起始值不能为负数。');
+      if(next.max!==''&&next.max<=(next.min===''?0:next.min))throw new Error('频率轴结束值必须大于起始值。');
+      if(next.step!==''&&next.max!==''&&(next.max-(next.min||0))/next.step>80)throw new Error('频率轴刻度过密，请增大间隔（最多 80 个刻度）。');
+      if(nextAxis.step!==''&&(!Number.isFinite(Number(nextAxis.step))||Number(nextAxis.step)<=0))throw new Error('数据轴刻度间隔必须为正数。');
+      if(axis[a].log&&['min','max'].some(k=>nextAxis[k]!==''&&Number(nextAxis[k])<=0))throw new Error('LOG10 数据轴范围必须为正数。');
+      const low=nextAxis.min===''?lastPlotLimits[a]?.low:Number(nextAxis.min),high=nextAxis.max===''?lastPlotLimits[a]?.high:Number(nextAxis.max);
+      if(low!=null&&high!=null)FrequencyStats.binLayout([],low,high,next);
+      frequency[a]={...next,enabled:true};axis[a]=nextAxis;dialog.close();renderAxis();renderPlot();
+    } catch(error){$('#frequencyError').textContent=error.message}
+  };
+}
+function tick(v){return Math.abs(v)>=1000?v.toExponential(1):Number(v.toPrecision(3)).toString()}function renderPlot(){if(!rows.length){corelSvg='';lastPlotLimits={};$('#legend').innerHTML='';$('#chart').innerHTML='<div class="notice" style="padding:40px">请先在“数据导入”中粘贴数据。</div>';$('#stats').innerHTML='';return}let data=rows.filter(r=>r.selected).map(r=>({r,x:value(r,'x'),y:value(r,'y'),g:plotGroup(r)})),valid=data.filter(d=>Number.isFinite(d.x)&&Number.isFinite(d.y));let bad=data.length-valid.length,gs=[...new Set(valid.map(d=>d.g))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));$('#plotNotice').textContent=`已选择 ${data.length} 个样品 · 有效投图 ${valid.length} 个 · 缺失、零分母或对数轴非正值排除 ${bad} 个。${frequency.x.enabled||frequency.y.enabled?'频率统计使用相同有效样品，按各组总样本数计算相对频率；缩放范围仅裁切显示。':''}`;$('#chartTitle').textContent=`${axisName('x')} vs ${axisName('y')}`;const extraTop=frequency.x.enabled?frequency.x.size+58:0,extraRight=frequency.y.enabled?frequency.y.size+86:0,W=750+extraRight,H=540+extraTop,L=140,R=70+extraRight,T=33+extraTop,B=102,pw=W-L-R,ph=H-T-B;let vals=a=>valid.map(d=>a==='x'?d.x:d.y),limits={};for(let a of ['x','y']){let z=axis[a],v=vals(a),mn=Math.min(...v),mx=Math.max(...v);if(!v.length){mn=z.log?.1:0;mx=z.log?10:1}let low=z.min!==''?+z.min:(z.log?10**Math.floor(Math.log10(mn)):mn-(mx-mn||1)*.08),high=z.max!==''?+z.max:(z.log?10**Math.ceil(Math.log10(mx)):mx+(mx-mn||1)*.08);if(z.log&&low<=0)low=mn>0?mn/2:.1;if(!(high>low))high=low+(z.log?low*10:1);limits[a]={low,high,lo:z.log?Math.log10(low):low,hi:z.log?Math.log10(high):high}}let pos=(v,a)=>{let z=axis[a],b=limits[a],u=z.log?Math.log10(v):v;return a==='x'?L+(u-b.lo)/(b.hi-b.lo)*pw:T+ph-(u-b.lo)/(b.hi-b.lo)*ph};let ticks=a=>{let z=axis[a],b=limits[a],s=Number(z.step),ar=[];if(z.log){let begin=Math.ceil(Math.log10(b.low)),end=Math.floor(Math.log10(b.high));for(let k=begin;k<=end&&ar.length<30;k++)ar.push(10**k)}else if(s>0){for(let t=Math.ceil(b.low/s)*s;t<=b.high&&ar.length<35;t+=s)ar.push(t)}else for(let i=0;i<=5;i++)ar.push(b.low+(b.high-b.low)*i/5);return ar};let grid=ticks('x').map(v=>`<line x1="${pos(v,'x')}" y1="${T}" x2="${pos(v,'x')}" y2="${T+ph}" stroke="#c9cfd3"/><text x="${pos(v,'x')}" y="${T+ph+37}" text-anchor="middle" fill="#222b33" font-size="16">${tick(v)}</text>`).join('')+ticks('y').map(v=>`<line x1="${L}" y1="${pos(v,'y')}" x2="${L+pw}" y2="${pos(v,'y')}" stroke="#c9cfd3"/><text x="${L-18}" y="${pos(v,'y')+5}" text-anchor="end" fill="#222b33" font-size="16">${tick(v)}</text>`).join('');let marks=valid.filter(d=>d.x>=limits.x.low&&d.x<=limits.x.high&&d.y>=limits.y.low&&d.y<=limits.y.high).map(d=>{
   return {d,x:pos(d.x,'x'),y:pos(d.y,'y'),st:style(d.g,gs)};
 });
 let liveMarks=marks.map(({d,x,y,st})=>markerMarkup(st,x,y,`${d.r.data[sampleCol]} · ${d.g} · X ${tick(d.x)} · Y ${tick(d.y)}`)).join('');
 let editableMarks=marks.map(({x,y,st})=>markerMarkup(st,x,y,'',true)).join('');
 const frame=`<rect x="${L}" y="${T}" width="${pw}" height="${ph}" fill="#ffffff" stroke="#1e252b" stroke-width="1.5"/>`;
 const axes=`<text x="${L+pw/2}" y="${H-34}" text-anchor="middle" font-family="Arial, sans-serif" fill="#111820" font-size="20">${esc(axisName('x'))}${axis.x.log?' (LOG10)':''}</text><text x="44" y="${T+ph/2}" transform="rotate(-90 44 ${T+ph/2})" text-anchor="middle" font-family="Arial, sans-serif" fill="#111820" font-size="20">${esc(axisName('y'))}${axis.y.log?' (LOG10)':''}</text>`;
-let svg=`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(axisName('x'))} 与 ${esc(axisName('y'))} 散点图"><rect width="${W}" height="${H}" fill="#ffffff"/>${frame}${grid}${liveMarks}${axes}</svg>`;
-corelSvg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${frame}${grid}${editableMarks}${axes}</svg>`;
+lastPlotLimits=limits;
+const marginal=renderFrequencyPlots(valid,gs,limits,pos,{W,H,L,T,pw,ph});
+let svg=`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(axisName('x'))} 与 ${esc(axisName('y'))} 散点图"><rect width="${W}" height="${H}" fill="#ffffff"/>${frame}${grid}${liveMarks}${axes}${marginal}</svg>`;
+corelSvg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${frame}${grid}${editableMarks}${axes}${marginal}</svg>`;
 $('#chart').innerHTML=svg;
+$('#chart').style.maxWidth=`${W}px`;
+$('#chart').style.width=`min(100%, ${W}px)`;
+$('#chart svg').style.aspectRatio=`${W} / ${H}`;
+$('#chart').querySelectorAll('[data-frequency-open]').forEach(el=>{el.onclick=e=>openFrequency(el.dataset.frequencyOpen,e?.target?.closest('[data-frequency-group]')?.dataset.frequencyGroup||'');el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.onclick(e)}}});
 legendGroups=gs;
 $('#legend').innerHTML=gs.map(g=>{let st=style(g,gs),icon=markerMarkup({...st,size:Math.min(st.size,8)},12,12);return `<button type="button" class="legend-item" data-group="${esc(g)}" aria-label="编辑 ${esc(g)} 图例"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg><span>${esc(g)}</span></button>`}).join('');
 $('#legend').querySelectorAll('.legend-item').forEach(button=>button.onclick=()=>openLegend(button.dataset.group));
@@ -251,10 +350,10 @@ function rank(v){return v.map(x=>({x})).map((o,i)=>({...o,i})).sort((a,b)=>a.x-b
 function download(name,content,type){let url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function sortedSnapshot(selectedOnly=true){let keys=[sampleCol,groupCol||'分组',...effectiveOrder()];let result=(selectedOnly?rows.filter(r=>r.selected):rows).map(r=>keys.map(k=>k==='分组'&&!groupCol?group(r):r.data[k]===''||r.data[k]==null?'na':r.data[k]));return {keys,result}}
 $('#svgExport').onclick=()=>{if(corelSvg)download('geochemistry-xy.svg',corelSvg,'image/svg+xml;charset=utf-8')};
-$('#pngExport').onclick=()=>{let svg=$('#chart svg');if(!svg)return;let blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image;im.onload=()=>{let c=document.createElement('canvas');c.width=1500;c.height=1080;let ctx=c.getContext('2d');ctx.drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{if(b){let u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='geochemistry-xy.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}URL.revokeObjectURL(url)},'image/png')};im.src=url};
+$('#pngExport').onclick=()=>{let svg=$('#chart svg');if(!svg)return;let blob=new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'}),url=URL.createObjectURL(blob),im=new Image;im.onload=()=>{let c=document.createElement('canvas');c.width=svg.viewBox.baseVal.width*2;c.height=svg.viewBox.baseVal.height*2;let ctx=c.getContext('2d');ctx.drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{if(b){let u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='geochemistry-xy.png';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}URL.revokeObjectURL(url)},'image/png')};im.src=url};
 function historyRows(){return history.flatMap((b,i)=>b.result.map(row=>{let record={'批次':i+1,'时间':b.time};b.keys.forEach((k,j)=>record[k]=row[j]);return record}))}
 function renderHistory(){let count=history.reduce((n,b)=>n+b.result.length,0);$('#historyCount').textContent=history.length?`${history.length} 批 · ${count} 个样品`:'尚无批次';let union=['批次','时间',...new Set(history.flatMap(b=>b.keys))],entries=historyRows();$('#historyTable').innerHTML=entries.length?`<thead><tr>${union.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${entries.slice(0,50).map(r=>`<tr>${union.map(c=>`<td>${esc(r[c]??'na')}</td>`).join('')}</tr>`).join('')}</tbody>`:'<tbody><tr><td>暂无汇总记录</td></tr></tbody>';$('#historyTable').dataset.columns=JSON.stringify(union);$('#historyTsv').value=entries.length?[union,...entries.map(r=>union.map(c=>r[c]??'na'))].map(row=>row.join('\t')).join('\n'):''}
 $('#addBatch').onclick=()=>{let snapshot=sortedSnapshot();if(!snapshot.result.length){$('#historyStatus').textContent='当前没有已勾选数据';return}history.push({...snapshot,time:new Date().toLocaleTimeString('zh-CN',{hour12:false})});$('#historyStatus').textContent=`已添加第 ${history.length} 批`;renderHistory()};
 $('#copyTsv').onclick=async()=>{let t=$('#historyTsv');if(!t.value){$('#historyStatus').textContent='请先汇总结果';return}try{await navigator.clipboard.writeText(t.value)}catch{t.select();document.execCommand('copy')}$('#historyStatus').textContent='数据已复制'};
 $('#clearHistory').onclick=()=>{history=[];$('#historyTsv').value='';$('#historyStatus').textContent='记录已清空';renderHistory()};
-$('#source').value=demo;parse();renderHistory();
+initFrequencyDialog();$('#source').value=demo;parse();renderHistory();
