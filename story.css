@@ -189,3 +189,23 @@
 .shape-field{display:grid;gap:7px;font-size:.83rem;color:#344455}.shape-picker{position:relative}.shape-picker summary{display:flex;align-items:center;gap:9px;min-height:39px;padding:5px 10px;border:1px solid #b9cad3;border-radius:5px;background:#fff;color:#192833;cursor:pointer;list-style:none}.shape-picker summary::-webkit-details-marker{display:none}.shape-picker summary span:last-child{margin-left:auto;font-size:1.1rem}.shape-picker svg{width:24px;height:24px;flex:none}.shape-options{position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:7px;border:1px solid #b9cad3;border-radius:6px;background:#fff;box-shadow:0 12px 30px #1b223244}.shape-options button{display:flex;align-items:center;gap:7px;padding:5px 7px;border:1px solid transparent;border-radius:4px;background:transparent;color:#233341;text-align:left;font-size:.78rem}.shape-options button:hover,.shape-options button[aria-selected="true"]{background:#e9f2f8;border-color:#bad0dc}
 .legend-dialog-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:22px}.legend-dialog-actions button{padding:10px 13px;box-shadow:none}
 @media(max-width:650px){.chart-wrap,.chart-wrap svg{height:auto;min-height:0}.legend-dialog{padding:17px}}
+
+/* Marginal frequency controls and editor. */
+.frequency-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid #ced9e1;color:#24323d;font-size:.8rem}
+.frequency-toggle label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.frequency-toggle input{margin:0}
+.frequency-settings{padding:5px 10px;border:1px solid #b7c8d2;border-radius:4px;background:#f5f9fc;color:#294555;font-size:.78rem}
+.frequency-settings:hover{background:#ddeef5}
+.frequency-panel:focus-visible{outline:2px solid #795c9a;outline-offset:3px}
+.frequency-dialog{width:min(620px,calc(100vw - 24px));max-height:90vh;overflow:auto}
+.frequency-dialog fieldset{min-width:0;margin:15px 0 0;padding:14px;border:1px solid #cbd7e0;border-radius:6px}
+.frequency-dialog legend{padding:0 6px;font-size:.85rem;font-weight:650;color:#344455}
+.frequency-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.frequency-fields-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.frequency-fields .field select,.frequency-fields .field input{min-width:0;width:100%;box-shadow:none}
+.frequency-fields .check-label,.frequency-grid{display:flex;align-items:center;gap:7px;font-size:.82rem;color:#344455}
+.frequency-grid{margin-top:13px}
+.frequency-dialog .notice{font-size:.75rem;line-height:1.65}
+.frequency-dialog .frequency-error{color:#a13c2c;font-size:.82rem;line-height:1.5;margin:12px 0 0}
+.frequency-dialog .legend-dialog-actions{position:sticky;bottom:-22px;padding:12px 0 2px;background:#f3f4f9;z-index:1}
+@media(max-width:650px){.frequency-fields-three{grid-template-columns:repeat(2,minmax(0,1fr))}.frequency-dialog fieldset{padding:11px}.frequency-dialog .legend-dialog-actions{bottom:-17px}}
