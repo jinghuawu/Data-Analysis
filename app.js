@@ -210,7 +210,7 @@ function showAxisTextFields(st){
 }
 let axisColorHSV=[0,0,0];
 function showAxisColorMode(){document.querySelectorAll('[data-axis-color-mode]').forEach(el=>el.hidden=el.dataset.axisColorMode!==$('#axisColorMode').value)}
-function closeAxisColorPicker(){$('#axisColorPanel').hidden=true;$('#axisColorToggle').setAttribute('aria-expanded','false')}
+function closeAxisColorPicker(){const panel=$('#axisColorPanel');panel.hidePopover?.();panel.hidden=true;$('#axisColorToggle').setAttribute('aria-expanded','false')}
 function syncAxisColor(hex,preserveCMYK=false,preserveHSV=false){
   const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)),[r,g,b]=rgb.map(v=>v/255),max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
   if(!preserveHSV){let h=d?(max===r?((g-b)/d+6)%6:max===g?(b-r)/d+2:(r-g)/d+4)*60:axisColorHSV[0];axisColorHSV=[h,max?d/max:0,max]}
@@ -228,7 +228,11 @@ function applyAxisHSV(){
   syncAxisColor('#'+rgb.map(n=>Math.round((n+m)*255).toString(16).padStart(2,'0')).join(''),false,true);
 }
 function initAxisColorPicker(){
-  $('#axisColorToggle').onclick=()=>{const open=$('#axisColorPanel').hidden;$('#axisColorPanel').hidden=!open;$('#axisColorToggle').setAttribute('aria-expanded',String(open))};
+  $('#axisColorToggle').onclick=()=>{
+    const panel=$('#axisColorPanel'),toggle=$('#axisColorToggle');if(!panel.hidden){closeAxisColorPicker();return}
+    panel.hidden=false;panel.showPopover?.();toggle.setAttribute('aria-expanded','true');
+    const b=toggle.getBoundingClientRect();panel.style.left=`${Math.max(8,Math.min(b.left,innerWidth-panel.offsetWidth-8))}px`;panel.style.top=`${Math.max(8,Math.min(b.bottom+4,innerHeight-panel.offsetHeight-8))}px`;
+  };
   $('#axisColorDone').onclick=()=>{try{axisTextFormValue();$('#axisTextError').textContent='';closeAxisColorPicker();$('#axisColorToggle').focus()}catch(e){$('#axisTextError').textContent=e.message}};
   $('#axisColorMode').onchange=showAxisColorMode;
   $('#axisColorHue').oninput=()=>{axisColorHSV[0]=Number($('#axisColorHue').value);applyAxisHSV()};
