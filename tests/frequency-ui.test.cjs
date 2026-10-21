@@ -131,3 +131,70 @@ test('SVG export contains both panels; PNG uses the full dynamic SVG dimensions'
   w.Image=class {set src(_){this.onload()}};
   el('#pngExport').click();assert.equal(canvas.width,1922);assert.equal(canvas.height,1446);
 });
+test('axis text defaults stay black at the original sizes, with decimal values at every magnitude',t=>{
+  const {d,el,change,w}=setup(t);
+  const labels=d.querySelectorAll('#chart [data-axis-edit]');assert.equal(labels.length,14);
+  for(const text of labels){
+    assert.equal(text.getAttribute('fill'),'#000000');assert.equal(text.getAttribute('data-cmyk'),'0,0,0,100');
+    assert.equal(text.getAttribute('font-size'),text.dataset.axisPart==='ticks'?'16':'20');
+  }
+  assert.equal(w.formatAxisNumber(3500,'decimal'),'3500');
+  assert.equal(w.formatAxisNumber(1e-7,'decimal'),'0.0000001');
+  assert.equal(w.formatAxisNumber(-3500,'decimal'),'-3500');
+  assert.equal(w.formatAxisNumber(0,'scientific'),'0');
+  assert.ok(w.formatAxisNumber(-3500,'scientific').startsWith('-3.5×10'));
+  assert.ok(w.formatAxisNumber(1e-7,'scientific').includes('>-7</tspan>'));
+  change('[data-axis="y"][data-key="min"]',2500);change('[data-axis="y"][data-key="max"]',3500);change('[data-axis="y"][data-key="step"]',200);
+  assert.deepEqual([...d.querySelectorAll('[data-axis-edit="y"][data-axis-part="ticks"]')].map(e=>e.textContent),['2600','2800','3000','3200','3400']);
+  assert.equal(el('#chart svg').getAttribute('viewBox'),'0 0 750 540');
+});
+test('clicking a tick edits only that axis, using superscripts and synchronized CMYK colors',async t=>{
+  const {d,el,change,w,downloads}=setup(t);
+  change('[data-axis="y"][data-key="min"]',2500);change('[data-axis="y"][data-key="max"]',3500);
+  el('[data-axis-edit="y"][data-axis-part="ticks"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  assert.ok(el('#axisTextDialog').open);assert.ok(el('#axisTextNameField').hidden);assert.equal(el('#axisTextSize').value,'16');
+  change('#axisTextSize',22);change('#axisTextNotation','scientific');change('[data-axis-cmyk="c"]',100);change('[data-axis-cmyk="k"]',0);
+  assert.equal(el('#axisTextColor').value,'#00ffff');
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(el('#axisTextDialog').open,false);
+  for(const text of d.querySelectorAll('[data-axis-edit="y"][data-axis-part="ticks"]')){
+    assert.equal(text.getAttribute('font-size'),'22');assert.equal(text.getAttribute('fill'),'#00ffff');assert.ok(text.querySelector('tspan[baseline-shift="super"]'));
+  }
+  assert.equal(el('[data-axis-edit="x"][data-axis-part="ticks"]').getAttribute('font-size'),'16');
+  assert.equal(el('[data-axis-edit="y"][data-axis-part="title"]').getAttribute('fill'),'#000000');
+  assert.equal(el('[data-axis="y"][data-key="min"]').value,'2500');
+  el('#svgExport').click();const svg=await downloads.at(-1).text(),doc=new w.DOMParser().parseFromString(svg,'image/svg+xml');
+  assert.equal(doc.querySelector('parsererror'),null);assert.equal(doc.querySelector('[data-axis-edit]'),null);
+  assert.ok(doc.querySelector('text[fill="#00ffff"][data-cmyk="100,0,0,0"] tspan'));
+  assert.doesNotMatch(svg,/NaN|Infinity/);
+});
+test('axis titles accept escaped names, picker colors, and independent apply/reset/cancel changes',t=>{
+  const {el,change,w}=setup(t),selector='[data-axis-edit="x"][data-axis-part="title"]';
+  el(selector).dispatchEvent(new w.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+  assert.ok(el('#axisTextDialog').open);assert.ok(el('#axisTextNotationField').hidden);
+  change('#axisTextName','Zr/Hf <custom>');change('#axisTextSize',24);change('#axisTextColor','#ff0000');
+  assert.equal(el('[data-axis-cmyk="m"]').value,'100');assert.equal(el('[data-axis-cmyk="k"]').value,'0');
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(el(selector).textContent,'Zr/Hf <custom>');assert.equal(el(selector).getAttribute('fill'),'#ff0000');
+  assert.equal(el(selector).querySelector('custom'),null);assert.equal(el('[data-axis-edit="y"][data-axis-part="title"]').getAttribute('font-size'),'20');
+  change('#groupPlot',false);assert.equal(el(selector).textContent,'Zr/Hf <custom>');
+  el(selector).dispatchEvent(new w.MouseEvent('click',{bubbles:true}));el('#axisTextReset').click();el('#axisTextCancel').click();
+  assert.equal(el(selector).getAttribute('font-size'),'24');
+  el(selector).dispatchEvent(new w.MouseEvent('click',{bubbles:true}));el('#axisTextReset').click();
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(el(selector).textContent,'SiO2');assert.equal(el(selector).getAttribute('font-size'),'20');assert.equal(el(selector).getAttribute('fill'),'#000000');
+});
+test('invalid text styles do not alter the plot, and enlarged labels keep all data and frame lines intact',t=>{
+  const {d,el,change,w,enable}=setup(t),selector='[data-axis-edit="y"][data-axis-part="ticks"]';enable('x');enable('y');
+  const original=el('#chart').innerHTML,stats=el('#stats').textContent,markers=d.querySelectorAll('#chart svg > circle, #chart svg > polygon').length;
+  el(selector).dispatchEvent(new w.MouseEvent('click',{bubbles:true}));change('#axisTextSize',0);
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.ok(el('#axisTextDialog').open);assert.ok(el('#axisTextError').textContent.includes('字号'));assert.equal(el('#chart').innerHTML,original);
+  change('#axisTextSize',36);change('[data-axis-cmyk="k"]',101);
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.ok(el('#axisTextDialog').open);
+  change('[data-axis-cmyk="k"]',100);el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(el('#stats').textContent,stats);assert.equal(d.querySelectorAll('#chart svg > circle, #chart svg > polygon').length,markers);
+  assert.equal(d.querySelectorAll('#chart svg > line[stroke="#c9cfd3"]').length,8);
+  assert.equal(d.querySelectorAll('.frequency-panel').length,2);assert.doesNotMatch(el('#chart').innerHTML,/NaN|Infinity/);
+  assert.ok(+el('#chart svg').getAttribute('width')>961);
+});

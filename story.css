@@ -209,3 +209,17 @@
 .frequency-dialog .frequency-error{color:#a13c2c;font-size:.82rem;line-height:1.5;margin:12px 0 0}
 .frequency-dialog .legend-dialog-actions{position:sticky;bottom:-22px;padding:12px 0 2px;background:#f3f4f9;z-index:1}
 @media(max-width:650px){.frequency-fields-three{grid-template-columns:repeat(2,minmax(0,1fr))}.frequency-dialog fieldset{padding:11px}.frequency-dialog .legend-dialog-actions{bottom:-17px}}
+
+/* Click or focus an axis label to edit its appearance. */
+.axis-text-edit{cursor:pointer}
+.axis-text-edit:hover,.axis-text-edit:focus-visible{text-decoration:underline;outline:none}
+.axis-text-dialog{width:min(500px,calc(100vw - 24px));overflow:auto}
+.axis-text-dialog [hidden]{display:none}
+.axis-text-dialog fieldset{min-width:0;margin:16px 0 0;padding:13px;border:1px solid #cbd7e0;border-radius:6px}
+.axis-text-dialog legend{padding:0 6px;font-size:.85rem;font-weight:650;color:#344455}
+.axis-cmyk-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.axis-cmyk-fields input{min-width:0;width:100%;box-shadow:none}
+.axis-text-dialog input[type=color]{width:100%;height:39px;padding:4px}
+.axis-text-dialog .notice{font-size:.76rem;line-height:1.6;color:#566875}
+.axis-text-preview{display:block;width:100%;height:120px;margin-top:14px;border:1px solid #d3dce3;border-radius:6px;background:#fff}
+.axis-text-dialog .axis-text-error{color:#a13c2c;font-size:.82rem;line-height:1.5;margin:10px 0 0}
