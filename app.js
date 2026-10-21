@@ -7,7 +7,7 @@ let axis={x:{num:'',den:'',use:false,min:'',max:'',step:'',log:false,unitEnabled
 let legendOverrides=new Map(),legendGroups=[],corelSvg='';
 function frequencyDefaults(){return {enabled:false,curve:'kde',scale:'count',histogram:false,showCurve:true,binWidth:'',binStart:'',bandwidth:'',min:'',max:'',step:'',divisions:4,grid:true,size:125,fontSize:12,lineWidth:2,histOpacity:.22}}
 let frequency={x:frequencyDefaults(),y:frequencyDefaults()},editingFrequency='x',lastPlotLimits={};
-function axisTextDefaults(part){return {fontSize:part==='ticks'?16:20,cmyk:[0,0,0,100],notation:'decimal',text:''}}
+function axisTextDefaults(part){return {fontSize:part==='ticks'?16:20,cmyk:[0,0,0,100],colorMode:'rgb',notation:'decimal',text:''}}
 let axisText={x:{ticks:axisTextDefaults('ticks'),title:axisTextDefaults('title')},y:{ticks:axisTextDefaults('ticks'),title:axisTextDefaults('title')}},editingAxisText=null;
 const decimalAxisNumber=new Intl.NumberFormat('en-US',{useGrouping:false,maximumSignificantDigits:3,notation:'standard'});
 const demo=`Sample ID	Group	SiO2	TiO2	Al2O3	Fe2O3T	MnO	MgO	CaO	Na2O	K2O	P2O5	LOI	Total	La	Ce	Pr	Nd	Sm	Eu	Gd	Tb	Dy	Ho	Er	Tm	Yb	Lu	Y	Li	Be	Rb	Sr	Cs	Ba	Zr	Hf	Nb	Ta	Ga	Th	U	Pb	Sc	V	Cr	Co	Ni	Cu	Zn	W	Sn	Mo
@@ -186,10 +186,13 @@ function axisTextFormValue(){
   const {a,part}=editingAxisText,fontSize=Number($('#axisTextSize').value),cmyk=[...$('#axisTextDialog').querySelectorAll('[data-axis-cmyk]')].map(el=>el.value===''?NaN:Number(el.value)),notation=$('#axisTextNotation').value;
   if(!Number.isFinite(fontSize)||fontSize<6||fontSize>72)throw new Error('字号需在 6–72 px 之间。');
   if(cmyk.some(v=>!Number.isFinite(v)||v<0||v>100))throw new Error('C、M、Y、K 数值需在 0–100 之间。');
+  const colorMode=$('#axisColorMode').value;
+  if(colorMode==='rgb'&&[...document.querySelectorAll('[data-axis-rgb]')].some(el=>el.value===''||!Number.isInteger(Number(el.value))||Number(el.value)<0||Number(el.value)>255))throw new Error('R、G、B 数值需为 0–255 的整数。');
+  if(colorMode==='hex'&&!/^#[0-9a-f]{6}$/i.test($('#axisColorHex').value))throw new Error('HEX 颜色需为 # 加六位十六进制数。');
   if(!['decimal','scientific'].includes(notation))throw new Error('请选择有效的数字显示格式。');
   const text=part==='title'?$('#axisTextName').value.trim():'';
   if(part==='title'&&!text)throw new Error('请输入坐标轴名称，或恢复默认名称。');
-  return {fontSize,cmyk,notation,text:text===axisTitle(a)?'':text};
+  return {fontSize,cmyk,colorMode,notation,text:text===axisTitle(a)?'':text};
 }
 function updateAxisTextPreview(){
   if(!editingAxisText)return;
@@ -202,7 +205,40 @@ function showAxisTextFields(st){
   const {a}=editingAxisText;
   $('#axisTextSize').value=st.fontSize;$('#axisTextNotation').value=st.notation;$('#axisTextName').value=st.text||axisTitle(a);
   $('#axisTextDialog').querySelectorAll('[data-axis-cmyk]').forEach((el,i)=>el.value=st.cmyk[i]);
-  $('#axisTextColor').value=cmykToHex(st.cmyk);$('#axisTextError').textContent='';updateAxisTextPreview();
+  $('#axisColorMode').value=st.colorMode||'rgb';showAxisColorMode();closeAxisColorPicker();
+  syncAxisColor(cmykToHex(st.cmyk),true);$('#axisTextError').textContent='';updateAxisTextPreview();
+}
+let axisColorHSV=[0,0,0];
+function showAxisColorMode(){document.querySelectorAll('[data-axis-color-mode]').forEach(el=>el.hidden=el.dataset.axisColorMode!==$('#axisColorMode').value)}
+function closeAxisColorPicker(){$('#axisColorPanel').hidden=true;$('#axisColorToggle').setAttribute('aria-expanded','false')}
+function syncAxisColor(hex,preserveCMYK=false,preserveHSV=false){
+  const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)),[r,g,b]=rgb.map(v=>v/255),max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+  if(!preserveHSV){let h=d?(max===r?((g-b)/d+6)%6:max===g?(b-r)/d+2:(r-g)/d+4)*60:axisColorHSV[0];axisColorHSV=[h,max?d/max:0,max]}
+  $('#axisTextColor').value=hex;$('#axisColorHex').value=hex;
+  document.querySelectorAll('[data-axis-rgb]').forEach((el,i)=>el.value=rgb[i]);
+  if(!preserveCMYK)document.querySelectorAll('[data-axis-cmyk]').forEach((el,i)=>el.value=hexToCmyk(hex)[i]);
+  const [h,s,v]=axisColorHSV;$('#axisColorHue').value=Math.round(h)%360;
+  $('#axisColorSpectrum').style.backgroundColor=`hsl(${h} 100% 50%)`;
+  $('#axisColorHandle').style.left=`${s*100}%`;$('#axisColorHandle').style.top=`${(1-v)*100}%`;
+  $('#axisColorSwatch').style.backgroundColor=hex;updateAxisTextPreview();
+}
+function applyAxisHSV(){
+  const [h,s,v]=axisColorHSV,c=v*s,x=c*(1-Math.abs(h/60%2-1)),m=v-c;
+  const rgb=h<60?[c,x,0]:h<120?[x,c,0]:h<180?[0,c,x]:h<240?[0,x,c]:h<300?[x,0,c]:[c,0,x];
+  syncAxisColor('#'+rgb.map(n=>Math.round((n+m)*255).toString(16).padStart(2,'0')).join(''),false,true);
+}
+function initAxisColorPicker(){
+  $('#axisColorToggle').onclick=()=>{const open=$('#axisColorPanel').hidden;$('#axisColorPanel').hidden=!open;$('#axisColorToggle').setAttribute('aria-expanded',String(open))};
+  $('#axisColorDone').onclick=()=>{try{axisTextFormValue();$('#axisTextError').textContent='';closeAxisColorPicker();$('#axisColorToggle').focus()}catch(e){$('#axisTextError').textContent=e.message}};
+  $('#axisColorMode').onchange=showAxisColorMode;
+  $('#axisColorHue').oninput=()=>{axisColorHSV[0]=Number($('#axisColorHue').value);applyAxisHSV()};
+  const spectrum=$('#axisColorSpectrum'),pick=e=>{const b=spectrum.getBoundingClientRect();if(!b.width||!b.height)return;axisColorHSV[1]=Math.max(0,Math.min(1,(e.clientX-b.left)/b.width));axisColorHSV[2]=1-Math.max(0,Math.min(1,(e.clientY-b.top)/b.height));applyAxisHSV()};
+  spectrum.onpointerdown=e=>{if(e.button!==0)return;spectrum.setPointerCapture(e.pointerId);pick(e)};
+  spectrum.onpointermove=e=>{if(spectrum.hasPointerCapture(e.pointerId))pick(e)};
+  document.querySelectorAll('[data-axis-rgb]').forEach(el=>el.oninput=el.onchange=()=>{const rgb=[...document.querySelectorAll('[data-axis-rgb]')].map(e=>e.value===''?NaN:Number(e.value));if(rgb.every(v=>Number.isInteger(v)&&v>=0&&v<=255))syncAxisColor('#'+rgb.map(v=>v.toString(16).padStart(2,'0')).join(''))});
+  $('#axisColorHex').oninput=$('#axisColorHex').onchange=()=>{const hex=$('#axisColorHex').value;if(/^#[0-9a-f]{6}$/i.test(hex))syncAxisColor(hex.toLowerCase())};
+  $('#axisTextDialog').addEventListener('click',e=>{if(!e.target.closest('.axis-color-picker'))closeAxisColorPicker()});
+  $('#axisTextDialog').addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#axisColorPanel').hidden){e.preventDefault();e.stopPropagation();closeAxisColorPicker();$('#axisColorToggle').focus()}});
 }
 function openAxisText(a,part,value=3500){
   editingAxisText={a,part,value:Number.isFinite(value)?value:3500};
@@ -213,14 +249,15 @@ function openAxisText(a,part,value=3500){
 }
 function initAxisTextDialog(){
   const dialog=$('#axisTextDialog');
+  initAxisColorPicker();
   $('#axisTextClose').onclick=$('#axisTextCancel').onclick=()=>dialog.close();
   $('#axisTextReset').onclick=()=>showAxisTextFields(axisTextDefaults(editingAxisText.part));
   for(const el of [$('#axisTextSize'),$('#axisTextNotation'),$('#axisTextName')])el.oninput=el.onchange=updateAxisTextPreview;
   $('#axisTextColor').oninput=$('#axisTextColor').onchange=()=>{
-    const cmyk=hexToCmyk($('#axisTextColor').value);dialog.querySelectorAll('[data-axis-cmyk]').forEach((el,i)=>el.value=cmyk[i]);updateAxisTextPreview();
+    syncAxisColor($('#axisTextColor').value);
   };
   dialog.querySelectorAll('[data-axis-cmyk]').forEach(el=>el.oninput=el.onchange=()=>{
-    try{$('#axisTextColor').value=cmykToHex(axisTextFormValue().cmyk)}catch{}updateAxisTextPreview();
+    try{syncAxisColor(cmykToHex(axisTextFormValue().cmyk),true)}catch{}updateAxisTextPreview();
   });
   $('#axisTextForm').onsubmit=e=>{
     e.preventDefault();

@@ -198,3 +198,24 @@ test('invalid text styles do not alter the plot, and enlarged labels keep all da
   assert.equal(d.querySelectorAll('.frequency-panel').length,2);assert.doesNotMatch(el('#chart').innerHTML,/NaN|Infinity/);
   assert.ok(+el('#chart svg').getAttribute('width')>961);
 });
+test('RGB, HEX and CMYK share one color popup and preserve exact CMYK values across modes',t=>{
+  const {el,change,w}=setup(t);el('[data-axis-edit="y"][data-axis-part="ticks"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  assert.ok(el('#axisColorPanel').hidden);assert.equal(el('#axisTextColor').type,'hidden');
+  assert.ok(el('[data-axis-cmyk="c"]').closest('#axisColorPanel'));assert.equal(el('#axisTextDialog fieldset'),null);
+  el('#axisColorToggle').click();assert.equal(el('#axisColorPanel').hidden,false);assert.equal(el('#axisColorToggle').getAttribute('aria-expanded'),'true');
+  change('#axisColorMode','cmyk');assert.equal(el('[data-axis-color-mode="cmyk"]').hidden,false);assert.ok(el('[data-axis-color-mode="rgb"]').hidden);
+  change('[data-axis-cmyk="c"]',20);change('[data-axis-cmyk="m"]',30);change('[data-axis-cmyk="y"]',40);change('[data-axis-cmyk="k"]',50);
+  const hex=el('#axisTextColor').value;change('#axisColorMode','rgb');change('#axisColorMode','hex');assert.equal(el('#axisColorHex').value,hex);change('#axisColorMode','cmyk');
+  assert.deepEqual([...el('#axisColorPanel').querySelectorAll('[data-axis-cmyk]')].map(e=>e.value),['20','30','40','50']);
+  el('#axisColorDone').click();assert.ok(el('#axisColorPanel').hidden);el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(el('[data-axis-edit="y"][data-axis-part="ticks"]').getAttribute('data-cmyk'),'20,30,40,50');
+  el('[data-axis-edit="y"][data-axis-part="ticks"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));assert.equal(el('#axisColorMode').value,'cmyk');assert.ok(el('#axisColorPanel').hidden);
+});
+test('popup RGB and HEX edits synchronize preview and reject invalid values; Escape closes only the picker',t=>{
+  const {el,change,w}=setup(t);el('[data-axis-edit="x"][data-axis-part="title"]').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));el('#axisColorToggle').click();
+  change('[data-axis-rgb="r"]',255);assert.equal(el('#axisTextColor').value,'#ff0000');assert.equal(el('#axisTextPreview text').getAttribute('fill'),'#ff0000');
+  change('#axisColorMode','hex');change('#axisColorHex','#00ff00');assert.equal(el('[data-axis-rgb="g"]').value,'255');assert.equal(el('[data-axis-rgb="r"]').value,'0');
+  change('#axisColorHex','#bad');el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.ok(el('#axisTextDialog').open);assert.match(el('#axisTextError').textContent,/HEX/);
+  change('#axisColorHex','#0000ff');el('#axisTextDialog').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.ok(el('#axisTextDialog').open);assert.ok(el('#axisColorPanel').hidden);
+  el('#axisTextForm').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(el('[data-axis-edit="x"][data-axis-part="title"]').getAttribute('fill'),'#0000ff');
+});
