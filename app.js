@@ -300,7 +300,7 @@ const axes=`<text x="${L+pw/2}" y="${H-34}" text-anchor="middle" font-family="Ar
 lastPlotLimits=limits;
 const marginal=renderFrequencyPlots(valid,gs,limits,pos,{W,H,L,T,pw,ph});
 let svg=`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(axisName('x'))} 与 ${esc(axisName('y'))} 散点图"><rect width="${W}" height="${H}" fill="#ffffff"/>${frame}${grid}${liveMarks}${axes}${marginal}</svg>`;
-corelSvg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${frame}${grid}${editableMarks}${axes}${marginal}</svg>`;
+corelSvg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${frame}<g id="plot-grid-and-ticks">${grid}</g>${editableMarks}${axes}${marginal}</svg>`;
 $('#chart').innerHTML=svg;
 $('#chart').style.maxWidth=`${W}px`;
 $('#chart').style.width=`min(100%, ${W}px)`;
