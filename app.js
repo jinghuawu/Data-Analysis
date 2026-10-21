@@ -5,7 +5,7 @@ function canonical(name){let raw=String(name??'').trim(),lower=raw.toLowerCase()
 let rows=[],cols=[],original=[],order=DEFAULT_ORDER.slice(),excludedElements=new Set(),sampleCol='',groupCol='',history=[];
 let axis={x:{num:'',den:'',use:false,min:'',max:'',step:'',log:false,unitEnabled:false,unit:'%'},y:{num:'',den:'',use:false,min:'',max:'',step:'',log:false,unitEnabled:false,unit:'%'}};
 let legendOverrides=new Map(),legendGroups=[],corelSvg='';
-function frequencyDefaults(){return {enabled:false,curve:'kde',scale:'count',histogram:true,showCurve:true,binWidth:'',binStart:'',bandwidth:'',min:'',max:'',step:'',divisions:4,grid:true,size:125,fontSize:12,lineWidth:2,histOpacity:.22}}
+function frequencyDefaults(){return {enabled:false,curve:'kde',scale:'count',histogram:false,showCurve:true,binWidth:'',binStart:'',bandwidth:'',min:'',max:'',step:'',divisions:4,grid:true,size:125,fontSize:12,lineWidth:2,histOpacity:.22}}
 let frequency={x:frequencyDefaults(),y:frequencyDefaults()},editingFrequency='x',lastPlotLimits={};
 const demo=`Sample ID	Group	SiO2	TiO2	Al2O3	Fe2O3T	MnO	MgO	CaO	Na2O	K2O	P2O5	LOI	Total	La	Ce	Pr	Nd	Sm	Eu	Gd	Tb	Dy	Ho	Er	Tm	Yb	Lu	Y	Li	Be	Rb	Sr	Cs	Ba	Zr	Hf	Nb	Ta	Ga	Th	U	Pb	Sc	V	Cr	Co	Ni	Cu	Zn	W	Sn	Mo
 12FJ038	A1	75.58	0.27	13.15	1.47	0.05	0.39	1.23	3.14	4.65	0.06	0.77	99.99	65.10	111.00	10.40	33.70	5.38	0.95	4.17	0.61	3.37	0.68	2.03	0.35	2.43	0.39	22.4		5.66	236	183	3.96	497	150	4.73	23.6	2.04	16.6	43.8	6.92	35.7	5.06	13	0.81	1.25	0.67	6.76	27.3			
@@ -238,12 +238,23 @@ function renderFrequencyPlots(data,gs,limits,pos,box){
           return `<rect ${rect} ${attrs} fill="${st.color}" fill-opacity="${s.histOpacity}" stroke="${st.color}" stroke-width=".7"><title>${esc(hint)} · [${tick(b.low)}, ${tick(b.high)}] · ${b.count} 个</title></rect>`;
         }).join('');
       }
-      // Draw all curves after the bars, keeping every group's line clickable.
-      if(s.showCurve)for(const {g,model} of models){
-        if(!model.curve.length)continue;
-        const color=style(g,gs).color,path=model.curve.map((p,i)=>`${i?'L':'M'}${horizontal?pos(p.x,a):fp(p.height)},${horizontal?fp(p.height):pos(p.x,a)}`).join(' ');
-        const attrs=`data-frequency-group="${esc(g)}"`;
-        content+=`<path d="${path}" ${attrs} fill="none" stroke="${color}" stroke-width="${s.lineWidth}" pointer-events="none"/><path d="${path}" ${attrs} fill="none" stroke="transparent" stroke-width="12" pointer-events="stroke"><title>${esc(g)} · n=${model.n} · ${esc(title)} · 点击设置</title></path>`;
+      // Paint all translucent areas before the outlines so overlapping groups stay legible.
+      if(s.showCurve){
+        let areas='',outlines='';
+        models.forEach(({g,model},index)=>{
+          if(!model.curve.length)return;
+          const color=style(g,gs).color,path=model.curve.map((p,i)=>`${i?'L':'M'}${horizontal?pos(p.x,a):fp(p.height)},${horizontal?fp(p.height):pos(p.x,a)}`).join(' ');
+          const attrs=`data-frequency-group="${esc(g)}"`,hint=`${esc(g)} · n=${model.n} · ${esc(title)} · 点击设置`;
+          const peak=Math.max(...model.curve.map(p=>p.height));
+          if(peak>0){
+            const id=`frequency-gradient-${a}-${index}`,baseline=fp(0),summit=fp(peak),first=pos(model.curve[0].x,a),last=pos(model.curve.at(-1).x,a);
+            const direction=horizontal?`x1="${x}" y1="${baseline}" x2="${x}" y2="${summit}"`:`x1="${baseline}" y1="${y}" x2="${summit}" y2="${y}"`;
+            const area=path+(horizontal?` L${last},${baseline} L${first},${baseline} Z`:` L${baseline},${last} L${baseline},${first} Z`);
+            areas+=`<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" ${direction}><stop offset="0" stop-color="${color}" stop-opacity="0"/><stop offset="1" stop-color="${color}" stop-opacity="0.4"/></linearGradient></defs><path class="frequency-fill" d="${area}" ${attrs} fill="url(#${id})" stroke="none"><title>${hint}</title></path>`;
+          }
+          outlines+=`<path class="frequency-curve" d="${path}" ${attrs} fill="none" stroke="${color}" stroke-width="${s.lineWidth}" pointer-events="none"/><path d="${path}" ${attrs} fill="none" stroke="transparent" stroke-width="12" pointer-events="stroke"><title>${hint}</title></path>`;
+        });
+        content+=areas+outlines;
       }
       content+='</g>';
       const info=`步长 ${tick(bins.width)}${axis[a].log?' · 原始值统计 / LOG10 显示':''}`;

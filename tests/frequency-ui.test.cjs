@@ -42,12 +42,12 @@ test('clicking a group curve opens its axis settings and applies normal/relative
   const curve=el('[data-frequency-open="x"] path[stroke="transparent"]'),g=curve.dataset.frequencyGroup;
   curve.dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
   assert.ok(el('#frequencyDialog').open);assert.ok(el('#frequencyContext').textContent.includes(g));
-  field('curve','normal');field('scale','relative');field('binWidth',2);field('binStart',0);field('histOpacity',.4);field('size',180);field('divisions',5);field('lineWidth',3);
+  field('curve','normal');field('scale','relative');field('histogram',true);field('binWidth',2);field('binStart',0);field('histOpacity',.4);field('size',180);field('divisions',5);field('lineWidth',3);
   change('[data-frequency-axis-key="min"]',50);change('[data-frequency-axis-key="max"]',90);change('[data-frequency-axis-key="step"]',10);
   apply();assert.equal(el('#frequencyDialog').open,false);
   assert.ok(el('[data-frequency-open="x"]').textContent.includes('正态'));
   assert.ok(el('[data-frequency-open="x"]').textContent.includes('%'));
-  assert.equal(el('[data-frequency-open="x"] path').getAttribute('stroke-width'),'3');
+  assert.equal(el('[data-frequency-open="x"] .frequency-curve').getAttribute('stroke-width'),'3');
   assert.equal(el('[data-frequency-open="x"] rect[data-frequency-group]').getAttribute('fill-opacity'),'0.4');
   assert.ok(el('[data-frequency-open="y"]').textContent.includes('KDE'));
   assert.equal(el('[data-axis="x"][data-key="min"]').value,'50');
@@ -73,7 +73,7 @@ test('invalid bin settings stay in the dialog; cancel and reset do not mutate pl
 });
 test('histogram-only and curve-only modes, grid settings and independent axes survive re-render',t=>{
   const {d,el,enable,open,field,apply,change}=setup(t);enable('x');enable('y');open('x');
-  field('showCurve',false);field('grid',false);apply();
+  field('histogram',true);field('showCurve',false);field('grid',false);apply();
   assert.equal(d.querySelectorAll('[data-frequency-open="x"] path').length,0);
   assert.ok(d.querySelectorAll('[data-frequency-open="x"] rect[data-frequency-group]').length>0);
   assert.ok(d.querySelectorAll('[data-frequency-open="y"] path').length>0);
@@ -93,11 +93,38 @@ test('LOG10 and denominator exclusions never introduce NaN or Infinity in freque
   assert.doesNotMatch(el('#chart svg').outerHTML,/NaN|Infinity/);
   assert.ok(el('#chart svg').outerHTML.includes('frequency-clip-x'));
 });
+test('default distributions use transparent baseline-to-peak fills behind every outline',t=>{
+  const {d,el,enable,open,w}=setup(t);enable('x');enable('y');
+  assert.equal(d.querySelectorAll('.frequency-panel rect[data-frequency-group]').length,0);
+  const groups=d.querySelectorAll('#legend .legend-item').length,ids=[];
+  for(const a of ['x','y']){
+    const panel=el(`[data-frequency-open="${a}"]`),fills=[...panel.querySelectorAll('.frequency-fill')],curves=[...panel.querySelectorAll('.frequency-curve')];
+    assert.equal(fills.length,groups);assert.equal(curves.length,groups);
+    for(const fill of fills){
+      assert.ok(fill.getAttribute('d').endsWith(' Z'));
+      const id=fill.getAttribute('fill').slice(5,-1),gradient=d.getElementById(id);ids.push(id);
+      assert.ok(gradient);assert.equal(gradient.getAttribute('gradientUnits'),'userSpaceOnUse');
+      const stops=gradient.querySelectorAll('stop');
+      assert.equal(stops[0].getAttribute('stop-opacity'),'0');assert.equal(stops[1].getAttribute('stop-opacity'),'0.4');
+      const curve=curves.find(p=>p.dataset.frequencyGroup===fill.dataset.frequencyGroup);
+      assert.equal(stops[1].getAttribute('stop-color'),curve.getAttribute('stroke'));
+      assert.ok(fill.compareDocumentPosition(curves[0])&w.Node.DOCUMENT_POSITION_FOLLOWING);
+      if(a==='x')assert.ok(+gradient.getAttribute('y1')>+gradient.getAttribute('y2'));
+      else assert.ok(+gradient.getAttribute('x1')<+gradient.getAttribute('x2'));
+    }
+  }
+  assert.equal(new Set(ids).size,ids.length);
+  el('[data-frequency-open="x"] .frequency-fill').dispatchEvent(new w.MouseEvent('click',{bubbles:true}));
+  assert.ok(el('#frequencyDialog').open);el('#frequencyCancel').click();
+  open('y');assert.equal(el('[data-frequency-key="histogram"]').checked,false);
+});
 test('SVG export contains both panels; PNG uses the full dynamic SVG dimensions',async t=>{
   const {el,enable,downloads,w}=setup(t);enable('x');enable('y');el('#svgExport').click();
   const svg=await downloads.at(-1).text();assert.ok(svg.includes('frequency-clip-x'));assert.ok(svg.includes('frequency-clip-y'));
   assert.ok(svg.includes('viewBox="0 0 961 723"'));
   const doc=new w.DOMParser().parseFromString(svg,'image/svg+xml');assert.equal(doc.querySelector('parsererror'),null);
+  assert.ok(doc.querySelectorAll('linearGradient').length>0);
+  for(const fill of doc.querySelectorAll('.frequency-fill'))assert.ok(doc.getElementById(fill.getAttribute('fill').slice(5,-1)));
   Object.defineProperty(el('#chart svg'),'viewBox',{value:{baseVal:{width:961,height:723}}});
   let canvas;const original=w.document.createElement.bind(w.document);
   w.document.createElement=name=>{const e=original(name);if(name==='canvas'){canvas=e;e.getContext=()=>({drawImage(){}});e.toBlob=cb=>cb(new Blob(['png']))}return e};
